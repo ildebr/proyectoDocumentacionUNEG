@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>Sistema Documentacion</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -15,6 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
+            
         <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 
@@ -27,9 +28,15 @@
                 </header>
             @endif
 
+            
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                <div class="py-12">
+                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-[200px_auto]" style="grid-template-columns: 200px auto;"> 
+                        @include('layouts.navegacion')
+                        {{ $slot }}
+                    </div>
+                </div>
             </main>
         </div>
     </body>
