@@ -64,26 +64,22 @@ Route::middleware(['auth','role:administrador'])->group(function(){
         $user = User::find($id);
         $users = App\Models\User::with('roles', 'permissions')->get();
 
-        $uno =$post['form-name']=='rol';
-        $dos = $post['accion']=='Agregar';
 
-        echo $post['form-name'] . $post['accion'] . $uno . $dos;
+        if ($post['form-name'] == 'rol'){
+            if($post['accion'] == 'Agregar'){
+                $user->assignRole($post['rol']);
+            }elseif($post['accion'] == 'Eliminar'){
+                $user->removeRole($post['rol']);
+            }
+        }else{
+            if($post['accion'] == 'Agregar'){
+                $user->givePermissionTo($post['permission']);
+            }elseif($post['accion'] == 'Eliminar'){
+                $user->revokePermissionTo($post['permission']);
+            }
+        }
 
-        // if ($post['form-name'] == 'rol'){
-        //     if($post['accion'] == 'Agregar'){
-        //         $user->assignRole($post['rol']);
-        //     }elseif($post['accion'] == 'Eliminar'){
-        //         $user->removeRole($post['rol']);
-        //     }
-        // }else{
-        //     if($post['accion'] == 'Agregar'){
-        //         $user->givePermissionTo($post['permission']);
-        //     }elseif($post['accion'] == 'Eliminar'){
-        //         $user->revokePermissionTo($post['permission']);
-        //     }
-        // }
-
-        // return view('admin.listuser')->with('users', $users);
+        return view('admin.listuser')->with('users', $users);
     })->name('admin.changeuserroleorpermission');
 });
 
