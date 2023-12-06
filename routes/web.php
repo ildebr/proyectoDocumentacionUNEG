@@ -59,11 +59,10 @@ Route::middleware(['auth','role:administrador'])->group(function(){
         return view('admin.changerole')->with(['user' => $user, 'roles' => $roles, 'permissions' => $permission]);
     });
     Route::post('/admin/cambiarRol/{id}/', function(Request $request,$id){
-        $html = "<div><h1>Hello, world!</h1></div>";
-        echo print_r(Request::post());
         $post = Request::post();
 
         $user = User::find($id);
+        $users = App\Models\User::with('roles', 'permissions')->get();
 
         if ($post['form-name'] == 'rol'){
             if($post['accion'] == 'Agregar'){
@@ -79,7 +78,7 @@ Route::middleware(['auth','role:administrador'])->group(function(){
             }
         }
 
-        return view('admin.test')->with('request', $request);
+        return view('admin.listuser')->with('users', $users);
     })->name('admin.changeuserroleorpermission');
 });
 
