@@ -30,7 +30,7 @@
             </tbody>
         </table>
 
-        <form method="POST" name="rol" action="{{ route('admin.changeuserroleorpermission', ['id' => $user['id']]) }}/">
+        <form method="POST" action="{{ route('admin.changeuserroleorpermission', ['id' => $user['id']]) }}/">
             <!-- Rol -->
             @csrf
             <input type="hidden" name="form-name" value="rol" />
