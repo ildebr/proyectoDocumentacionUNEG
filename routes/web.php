@@ -40,47 +40,11 @@ Route::get('/admin', function(){
 })->middleware(['auth','role:administrador'])->name('admin.index');
 
 Route::middleware(['auth','role:administrador'])->group(function(){
-    Route::get('/admin/listadeusuarios', function () {
-        $users = App\Models\User::with('roles', 'permissions')->get();
-        error_log($users);
-        return view('admin.listuser')->with('users', $users);
-    })->name('admin.listuser');
+    Route::get('/admin/listadeusuarios', [UsuariosControlador::class, 'index'])->name('admin.listuser');
     
     //cambiar rol
-    Route::get('/admin/cambiarRol/{id}', function($id){
-        $user = User::with('roles', 'permissions')->find($id);
-        // $prueba = $user->getDirectPermissions(); //Direct permissions
-        // $user->getPermissionsViaRoles(); //permissions via roles
-        //$user->getAllPermissions(); //all permissions
-        // $prueba = $user->getRoleNames(); // get roles
-        // echo $prueba;
-        $roles = \Spatie\Permission\Models\Role::all();
-        $permission = \Spatie\Permission\Models\Permission::all();
-        return view('admin.changerole')->with(['user' => $user, 'roles' => $roles, 'permissions' => $permission]);
-    });
-    Route::post('/admin/cambiarRol/{id}/', function(Request $request,$id){
-        $post = Request::post();
-
-        $user = User::find($id);
-        $users = App\Models\User::with('roles', 'permissions')->get();
-
-
-        if ($post['form-name'] == 'rol'){
-            if($post['accion'] == 'Agregar'){
-                $user->assignRole($post['rol']);
-            }elseif($post['accion'] == 'Eliminar'){
-                $user->removeRole($post['rol']);
-            }
-        }else{
-            if($post['accion'] == 'Agregar'){
-                $user->givePermissionTo($post['permission']);
-            }elseif($post['accion'] == 'Eliminar'){
-                $user->revokePermissionTo($post['permission']);
-            }
-        }
-
-        return view('admin.listuser')->with('users', $users);
-    })->name('admin.changeuserroleorpermission');
+    Route::get('/admin/cambiarRol/{id}', [UsuariosControlador::class, 'changeroleGet']);
+    Route::post('/admin/cambiarRol/{id}/', [UsuariosControlador::class, 'changeRolePost'])->name('admin.changeuserroleorpermission');
 });
 
 Route::get('/admin/crearusuario', function(){
