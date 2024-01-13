@@ -22,11 +22,11 @@ class Recaptcha implements ValidationRule
 
         $data = json_decode( json_encode($response), true);
 
-        print_r($data);
+        // print_r($data);
         // exit;
         // error_log($data->implode(' '));
 
-        if($data['success'] && $data['score'] >=0.7){
+        if(!$data['success'] && !$data['score'] >=0.7){
             $fail('Recaptcha no fue superado');
         }
     }

@@ -5,6 +5,7 @@
         </h2>
     </x-slot>
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+        <h2>Haz click sobre el nombre de cualquier usuario para cambiar sus roles/permisos</h2>
         <table class="table-auto w-full p-4">
             <thead>
                 <th>Usuario</th>

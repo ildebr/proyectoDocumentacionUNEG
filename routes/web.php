@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Models\User;
+use App\Http\Controllers\UsuariosControlador;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +44,7 @@ Route::middleware(['auth','role:administrador'])->group(function(){
     Route::get('/admin/listadeusuarios', [UsuariosControlador::class, 'index'])->name('admin.listuser');
     
     //cambiar rol
-    Route::get('/admin/cambiarRol/{id}', [UsuariosControlador::class, 'changeroleGet']);
+    Route::get('/admin/cambiarRol/{id}', [UsuariosControlador::class, 'changeRoleGet']);
     Route::post('/admin/cambiarRol/{id}/', [UsuariosControlador::class, 'changeRolePost'])->name('admin.changeuserroleorpermission');
 });
 
