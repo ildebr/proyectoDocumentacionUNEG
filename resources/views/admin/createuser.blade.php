@@ -14,7 +14,7 @@
                 
                         <!-- Name -->
                         <div>
-                            <x-input-label for="name" :value="__('Name')" />
+                            <x-input-label for="name" :value="__('Nombre')" />
                             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
@@ -24,6 +24,38 @@
                             <x-input-label for="email" :value="__('Email')" />
                             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        </div>
+
+                        <!-- segundo nombre -->
+
+                        <div class="mt-4">
+                            <x-input-label for="segundo_nombre" :value="__('Segundo Nombre')" />
+                            <x-text-input id="segundo_nombre" class="block mt-1 w-full" type="text" name="segundo_nombre" :value="old('segundo_nombre')" required autofocus autocomplete="segundo_nombre" />
+                            <x-input-error :messages="$errors->get('segundo_nombre')" class="mt-2" />
+                        </div>
+
+                        <!-- primer apellido -->
+
+                        <div class="mt-4">
+                            <x-input-label for="primer_apellido" :value="__('Primer apellido')" />
+                            <x-text-input id="primer_apellido" class="block mt-1 w-full" type="text" name="primer_apellido" :value="old('primer_apellido')" required autofocus autocomplete="primer_apellido" />
+                            <x-input-error :messages="$errors->get('primer_apellido')" class="mt-2" />
+                        </div>
+
+                        <!-- segundo apellido -->
+
+                        <div class="mt-4">
+                            <x-input-label for="segundo_apellido" :value="__('Segundo apellido')" />
+                            <x-text-input id="segundo_apellido" class="block mt-1 w-full" type="text" name="segundo_apellido" :value="old('segundo_apellido')" required autofocus autocomplete="segundo_apellido" />
+                            <x-input-error :messages="$errors->get('segundo_apellido')" class="mt-2" />
+                        </div>
+
+                        <!-- segundo apellido -->
+
+                        <div class="mt-4">
+                            <x-input-label for="cedula" :value="__('Cedula')" />
+                            <x-text-input id="cedula" class="block mt-1 w-full" type="text" name="cedula" :value="old('cedula')" required autofocus autocomplete="cedula" />
+                            <x-input-error :messages="$errors->get('cedula')" class="mt-2" />
                         </div>
 
                         <!-- Rol -->

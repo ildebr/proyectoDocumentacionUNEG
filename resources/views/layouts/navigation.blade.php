@@ -22,6 +22,9 @@
                     <x-nav-link :href="route('admin.createuser')" :active="request()->routeIs('admin.createuser')">
                         {{ __('Crear Usuario') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('general.crearplan')" :active="request()->routeIs('general.crearplan')">
+                        {{ __('Crear Plan') }}
+                    </x-nav-link>
                     @endrole
                 </div>
             </div>

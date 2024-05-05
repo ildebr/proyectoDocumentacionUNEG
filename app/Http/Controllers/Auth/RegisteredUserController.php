@@ -34,12 +34,18 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'cedula' => ['required', 'string', 'lowercase', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        error_log($request->cedula);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'segundo_nombre'=> $request->segundo_nombre,
+            'primer_apellido'=> $request->primer_apellido,
+            'segundo_apellido'=> $request->segundo_apellido,
+            'cedula'=> $request->cedula,
             'password' => Hash::make($request->password),
         ]);
         if($request->rol){

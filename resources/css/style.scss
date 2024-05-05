@@ -1,0 +1,102 @@
+
+
+
+
+.option{
+    &__element{
+        
+        &:last-of-type{
+            margin-bottom: 0;
+        }
+        &__container{
+            display: flex;
+            gap: 1rem;
+            margin-bottom: .5rem;
+        border-radius: 8px;
+        
+        }
+        &__closebtn{
+            font-size: 1.5rem;
+            font-weight: 700;
+
+            &:hover{
+                color: red;
+                cursor: pointer;
+            }
+        }
+    }
+
+}
+
+.asigrelbox{
+    margin-top: 1rem;
+    &__item{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin-bottom: 2rem;
+    }
+    &__header{
+        grid-row: 1/-1;
+        grid-column: 1/-1;
+    }
+
+    &__selected{
+        border: 1px solid gray;
+        border-radius: 8px;
+    }
+
+    .buscar-asignatura{
+        background-repeat: no-repeat;
+        background-position: 5px center;
+        background-size: 22px;
+        padding-left: 30px;
+        border-radius: 500px;
+    }
+
+    &__results{
+        position: relative;
+
+        ul{
+            max-height: 300px;
+            overflow: scroll;
+            width: 100%;
+            overflow-x: hidden;
+            position: absolute;
+            background: #ebebeb;
+        }
+    }
+
+    .searchbox__result__element{
+        padding: .5rem;
+        &:hover{
+            background-color: beige;
+            cursor: pointer;
+            padding-left: 1rem;
+        }
+    }
+}
+
+.relacion{
+    background-color: rgb(223, 223, 223);
+    display: inline-block;
+    border-radius: 5px;
+    padding: .1rem;
+
+    &__deletebtn{
+        cursor: pointer;
+        margin-left: .25rem;
+    }
+}
+
+
+.codex-editor{
+    border: 1px solid rgb(209 213 219) ;
+
+    border-radius: 0.375rem;
+    padding: .5rem;
+}
+
+label{
+    display: block;
+    width: 100%;
+}

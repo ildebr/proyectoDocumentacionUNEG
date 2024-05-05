@@ -1,0 +1,84 @@
+.option__element:last-of-type {
+  margin-bottom: 0;
+}
+.option__element__container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+}
+.option__element__closebtn {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.option__element__closebtn:hover {
+  color: red;
+  cursor: pointer;
+}
+
+.asigrelbox {
+  margin-top: 1rem;
+}
+.asigrelbox__item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 2rem;
+}
+.asigrelbox__header {
+  grid-row: 1/-1;
+  grid-column: 1/-1;
+}
+.asigrelbox__selected {
+  border: 1px solid gray;
+  border-radius: 8px;
+}
+.asigrelbox .buscar-asignatura {
+  background-repeat: no-repeat;
+  background-position: 5px center;
+  background-size: 22px;
+  padding-left: 30px;
+  border-radius: 500px;
+}
+.asigrelbox__results {
+  position: relative;
+}
+.asigrelbox__results ul {
+  max-height: 300px;
+  overflow: scroll;
+  width: 100%;
+  overflow-x: hidden;
+  position: absolute;
+  background: #ebebeb;
+}
+.asigrelbox .searchbox__result__element {
+  padding: 0.5rem;
+}
+.asigrelbox .searchbox__result__element:hover {
+  background-color: beige;
+  cursor: pointer;
+  padding-left: 1rem;
+}
+
+.relacion {
+  background-color: rgb(223, 223, 223);
+  display: inline-block;
+  border-radius: 5px;
+  padding: 0.1rem;
+}
+.relacion__deletebtn {
+  cursor: pointer;
+  margin-left: 0.25rem;
+}
+
+.codex-editor {
+  border: 1px solid rgb(209, 213, 219);
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+}
+
+label {
+  display: block;
+  width: 100%;
+}
+
+/*# sourceMappingURL=style.css.map */
