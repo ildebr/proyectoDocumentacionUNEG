@@ -25,7 +25,7 @@
                     <p>Al completar la carga de informacion asignado por un coordinador, este pasara al coordinador para ser aprobado y luego a la/el jefe de departamento.</p>
 
 
-                    <form method="POST" action="{{route('general.asignarasignatura')}}">
+                    <form method="POST" action="{{route('general.asignarasignaturapost')}}">
                         @csrf
                         <input type="hidden" name="lapso" value="{{$data['lapso']}}">
                         <input type="hidden" name="carrera" value="{{$data['carrera']}}">

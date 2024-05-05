@@ -232,7 +232,7 @@ Route::post('/plan/asignarasignatura', function (Request $request) {
     //     }
     // }
     // return view('general.asignarasignatura')->with('data',['users'=> $users, 'asignaturas'=> $asignaturas, 'seleccionadas' => $seleccionadas, 'lapso'=>$lapso, 'carrera'=>$carrera, 'error'=>$error])->with(compact('selresults'));
-})->middleware(['auth','role:administrador'])->name('general.asignarasignatura');
+})->middleware(['auth','role:administrador'])->name('general.asignarasignaturapost');
 
 //asignacion directa
 Route::get('/plan/asignarasignatura/directo/{lapso}/{carrera}/{asignatura}', function(Request $request, $lapso, $carrera, $asignatura){
@@ -455,7 +455,7 @@ Route::get('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$l
     
 })->middleware(['auth'])->name('general.plancrear');
 
-Route::get('/{lapso}/{carrera}/{asignatura}/editar', function(Request $request,$lapso,$carrera,$asignatura){
+Route::get('/{lapso}/{carrera}/{asignatura}/{version}/editar', function(Request $request,$lapso,$carrera,$asignatura){
     error_log(Auth::user()->hasRole('administrador'));
 
     $asignaturaDetalle = DB::table('sdd090ds')->select('*')->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->where('sdd090ds.sdd090d_cod_asign', '=', $asignatura)->get()->first();

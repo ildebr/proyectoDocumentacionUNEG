@@ -24,9 +24,6 @@
             <x-nav-link :href="route('general.cargarplan')" :active="request()->routeIs('general.cargarplan')">
                 {{ __('Cargar/editar Plan') }}
             </x-nav-link>
-            <x-nav-link :href="route('general.asignarasignatura')" :active="request()->routeIs('general.asignarasignatura')">
-                {{ __('Asignar asignatura') }}
-            </x-nav-link>
         
         @endrole
 
