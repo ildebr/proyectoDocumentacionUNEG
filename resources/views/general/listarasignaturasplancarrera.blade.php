@@ -35,7 +35,7 @@
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" id="tabla-planes">
                         <thead>
                             <tr>
-                                <th>checkbox</th>
+                                <th></th>
                                 <th>id</th>
                                 <th>Asignatura</th>
                                 <th>Codigo</th>
@@ -43,6 +43,7 @@
                                 <th>UC</th>
                                 <th>Estado Plan</th>
                                 <th>Accion</th>
+                                <th>Version</th>
                             </tr>
                         </thead>
                         
@@ -55,6 +56,7 @@
                                 <td>{{$asignatura->sdd090d_nivel_asignatura}}</td>
                                 <td>{{$asignatura->sdd090d_uc}}</td>
                                 <td>
+                                    
                                     @if(isset($asignatura->sdd200d_estado))
                                         @if($asignatura->sdd200d_estado == 'a ')
                                         Asignado
@@ -84,7 +86,12 @@
                                     @else
                                     No asignado
                                     @endif
+                                    @if($asignatura->sdd200d_estado == 'ff')
+                                    <p><a href="{{route('general.crearnuevaversionplan', ['lapso'=>$lapso, 'carrera'=> $asignatura->sdd090d_cod_carr, 'asignatura'=>$asignatura->sdd090d_cod_asign])}}" class="cta_nueva_version">
+                                        Nueva version</a></p>
+                                    @endif
                                 </td>
+                                <td>{{$asignatura->sdd210ds_version}}</td>
                             </tr>
                         @endforeach
                     </table>
@@ -172,5 +179,9 @@
 
         $('table colgroup').remove()
     });
+
+    $('.cta_nueva_version').click(e=>{
+        console.log('e')
+    })
     </script>
 </x-app-layout>

@@ -367,14 +367,37 @@ Route::get('/carrera/{carrera}/asignaturas/lista', function(Request $reques,$car
 Route::get('/{lapso}/{carrera}/asignaturas/lista', function(Request $reques,$lapso,$carrera){
 
     // $asignaturas = DB::table('sdd090ds')->select('*')->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->get();
+    // se obtienen las asignaturas de la carrera seleccionada en el lapso academico seleccionado
+    // $asignaturas = DB::table('sdd090ds')->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado')->leftjoin('sdd200ds', function($join){
+    //     $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
+    // })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd090ds.sdd090d_cod_asign')->get();
 
-    $asignaturas = DB::table('sdd090ds')->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado')->leftjoin('sdd200ds', function($join){
+    $asignaturas = DB::table('sdd090ds')->distinct()->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado', 'sdd210ds_version')->leftjoin('sdd200ds', function($join){
         $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
-    })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->get();
+    })->leftjoin('sdd210ds', function($join) use ($carrera, $lapso){
+        $join->on(function($query) use($carrera, $lapso) {
+            $query->on('sdd210ds.sdd210d_cod_carr', '=', 'sdd090ds.sdd090d_cod_carr');
+            $query->on('sdd210ds.sdd210d_lapso_vigencia', '=', 'sdd090ds.sdd090d_lapso_vigencia');
+            $query->on('sdd210ds.sdd210d_cod_asign', '=', 'sdd090ds.sdd090d_cod_asign');
+        });
+    })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd090ds.sdd090d_cod_asign')->orderBy('sdd210ds_version', 'ASC')->get();
+    
+    
+    error_log(DB::table('sdd090ds')->distinct()->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado', 'sdd210ds_version')->leftjoin('sdd200ds', function($join){
+        $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
+    })->leftjoin('sdd210ds', function($join) use ($carrera, $lapso){
+        $join->on(function($query) use($carrera, $lapso) {
+            $query->on('sdd210ds.sdd210d_cod_carr', '=', 'sdd090ds.sdd090d_cod_carr');
+            $query->on('sdd210ds.sdd210d_lapso_vigencia', '=', 'sdd090ds.sdd090d_lapso_vigencia');
+            $query->on('sdd210ds.sdd210d_cod_asign', '=', 'sdd090ds.sdd090d_cod_asign');
+        });
+    })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd090ds.sdd090d_cod_asign')->orderBy('sdd210ds_version', 'ASC')->toSql());
 
-    error_log(DB::table('sdd090ds')->select('sdd200ds.id as status_id','*')->leftjoin('sdd200ds', function($join){
-        $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
-    })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->toSql());
+
+    // error_log(json_encode($asignaturas));
+    // error_log(DB::table('sdd090ds')->select('sdd200ds.id as status_id','*')->leftjoin('sdd200ds', function($join){
+    //     $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
+    // })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->toSql());
 
 
     $carrera = App\Models\sdd080d::where('sdd080d_cod_carr', '=', $carrera)->get()->first();
@@ -599,12 +622,8 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
             $estado = App\Models\sdd200d::where('sdd200d_cod_carr', '=', $carrera)->where('sdd200d_cod_asign', '=', $asignatura)->where('sdd200d_lapso_vigencia', '=',$lapso)->first();
             // si tiene estado rj o c o ff esta en su estado de aprobacion final, por lo que se actualiza
             if( isset($estado->sdd200d_estado) && ($estado->sdd200d_estado == 'rj' || $estado->sdd200d_estado == 'c ' || $estado->sdd200d_estado == 'ff')){
-                error_log('entro');
                 $estado->sdd200d_estado ='ff';
                 $estado->save();
-                error_log(json_encode($estado));
-                // error_log('p');
-                // error_log(json_encode($estado));
                 //guardar datos
                 sdd210d::updateOrCreate(
                     [
@@ -650,8 +669,8 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                         'sdd200d_estado' => 'c',
                 ]);
 
-                error_log('p');
-                error_log(json_encode($asignado));
+                // error_log('p');
+                // error_log(json_encode($asignado));
                 sdd210d::updateOrCreate(
                 [
                     'sdd210d_cod_carr' => $existeasignatura->sdd090d_cod_carr,
@@ -693,6 +712,57 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
     }
     return redirect()->route('plan.mostrarasignados');
 })->middleware(['auth'])->name('general.plancrear');
+
+
+Route::get('/{lapso}/{carrera}/{asignatura}/crearVersion', function(Request $request, $lapso, $carrera, $asignatura){
+    //nombre de la asignatura
+    $asignatura = DB::table('sdd090ds')->select('sdd090ds.sdd090d_nom_asign')->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->where('sdd090ds.sdd090d_cod_asign', '=', $asignatura)->get()->first();
+    //nombre de la carrera
+    $carrera = DB::table('sdd080ds')->select('sdd080ds.sdd080d_nom_carr')->where('sdd080ds.sdd080d_cod_carr', '=', $carrera)->get()->first();
+
+    if($asignatura && $carrera){
+        return view('general.crearnuevaversionplan')->with(compact('asignatura','carrera'));
+    }else{
+        abort(403, 'No existe esta pagina');
+    }
+    
+})->middleware(['auth','role:administrador'])->name('general.crearnuevaversionplan');
+
+Route::post('/{lapso}/{carrera}/{asignatura}/crearVersion', function(Request $request, $lapso, $carrera, $asignatura){
+    //nombre de la asignatura
+    $asignaturaRes = DB::table('sdd090ds')->select('sdd090ds.sdd090d_nom_asign')->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->where('sdd090ds.sdd090d_cod_asign', '=', $asignatura)->get()->first();
+    //nombre de la carrera
+    $carreraRes = DB::table('sdd080ds')->select('sdd080ds.sdd080d_nom_carr')->where('sdd080ds.sdd080d_cod_carr', '=', $carrera)->get()->first();
+
+    if($asignaturaRes && $carreraRes){
+        // busca versiones existentes y seleccionamos la mas alta
+        $versionMasAlta = DB::table('sdd210ds')->select('sdd210ds.sdd210ds_version')->where('sdd210ds.sdd210d_lapso_vigencia', '=', $lapso)->where('sdd210ds.sdd210d_cod_carr', '=', $carrera)->where('sdd210ds.sdd210d_cod_asign', '=', $asignatura)->orderBy('sdd210ds.sdd210ds_version', 'DESC')->get()->first();
+        error_log(json_encode($versionMasAlta));
+        error_log($lapso);
+        
+        if($versionMasAlta){
+            // si el query devuelve un resultado se crea la nueva version
+
+            // se convierta numero
+            $version = (int)$versionMasAlta->sdd210ds_version;
+            // se le suma uno para obtener la nueva version
+            $version = ++$version;
+            error_log($version);
+
+            // se crea una nueva version 
+            sdd210d::create(['sdd210ds_version'=>$version, 'sdd210d_lapso_vigencia'=>$lapso, 'sdd210d_cod_carr'=>$carrera, 'sdd210d_cod_asign'=>$asignatura]);
+        }else{
+            // se crea una version
+            sdd210d::create(['sdd210ds_version'=>1, 'sdd210d_lapso_vigencia'=>$lapso, 'sdd210d_cod_carr'=>$carrera, 'sdd210d_cod_asign'=>$asignatura]);
+        }
+        
+        return redirect()->route('general.listarasignaturaslapsocarrera', ['lapso' => $lapso, 'carrera' => $carrera]);
+    }else{
+        abort(403, 'No existe esta pagina');
+    }
+    
+})->middleware(['auth','role:administrador'])->name('general.crearnuevaversionplan');
+
 
 Route::get('/asignar', function(Request $request){
     $input = Request::all();
