@@ -26,6 +26,8 @@
                     @csrf
                     <h3 class="mt-2 mb-2"><strong>Informacion General</strong></h3>
 
+                    <input type="hidden" name="version_plan" value="{{request()->route('version')}}">
+
                     <div class="form-grid grid grid-cols-3 gap-4 mb-4" style="">
                         <div>
                             <label for="codigo">Codigo </label>
@@ -139,19 +141,31 @@
                     <label class="mt-6 block" for="bibliografia">Bibliografia
                         <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="bibliografia" id="bibliografia" cols="30" rows="10">{{$plan->sdd210ds_as_bibliografia}}</textarea>
                     </label>
-
-                    
-                    <button class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 mt-6">
-                        @if($estado->sdd200d_estado == 'c ' || $estado->sdd200d_estado == 'rj' || $estado->sdd200d_estado == 'ff')
-                        Subida definitiva
-                        @elseif($estado->sdd200d_estado == 'a ')
-                        Enviar para revision
-                        @elseif($estado->sdd200d_estado == 'rs')
-                        Enviar a jefe de departamento
+                    @if(!isset($estado) )
+                        @if($plan->sdd210ds_estado == 'p')
+                        <p>Este archivo no se puede actualizar</p>
                         @else
-                        Cargar
+                        <button class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 mt-6">
+                            Cargar
+                        </button>
                         @endif
-                    </button>
+                    @else
+                        @if(isset($plan->sdd210ds_estado) && $plan->sdd210ds_estado == 'p')
+                        <span></span>
+                        @else
+                            <button class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 mt-6">
+                                @if($estado->sdd200d_estado == 'c ' || $estado->sdd200d_estado == 'rj' || $estado->sdd200d_estado == 'ff')
+                                Subida definitiva
+                                @elseif($estado->sdd200d_estado == 'a ')
+                                Enviar para revision
+                                @elseif($estado->sdd200d_estado == 'rs')
+                                Enviar a jefe de departamento
+                                @else
+                                Cargar
+                                @endif
+                            </button>
+                        @endif
+                    @endif
                     </form>
                     <div id="editorjs"></div>
                     

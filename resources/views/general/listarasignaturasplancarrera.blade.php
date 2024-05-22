@@ -48,30 +48,46 @@
                         </thead>
                         
                         @foreach ($asignaturas as $asignatura)
-                            <tr>
+                            @if(isset($asignatura->sdd210ds_estado) && $asignatura->sdd210ds_estado == 'a ')
+                                <tr style="background-color: #3e8e3e; color: white">
+                            @else
+                                <tr>
+                            @endif
                                 <td><input type="checkbox" value="{{$asignatura->sdd090d_cod_asign}}"></td>
                                 <td>{{$asignatura->id}}</td>
                                 <td>{{$asignatura->sdd090d_nom_asign}}</td>
                                 <td>{{$asignatura->sdd090d_cod_asign}}</td>
                                 <td>{{$asignatura->sdd090d_nivel_asignatura}}</td>
                                 <td>{{$asignatura->sdd090d_uc}}</td>
-                                <td>
-                                    
-                                    @if(isset($asignatura->sdd200d_estado))
-                                        @if($asignatura->sdd200d_estado == 'a ')
-                                        Asignado
-                                        @elseif($asignatura->sdd200d_estado == 'c ')
-                                        Creado por administrador
-                                        @elseif($asignatura->sdd200d_estado == 'rs')
-                                        En revision
-                                        @elseif($asignatura->sdd200d_estado == 'rj')
-                                        Pendiente por aprobacion
-                                        @elseif($asignatura->sdd200d_estado == 'ff')
-                                        Aprobado
-                                        <a href="{{route('pdf.generarTematica', ['lapso'=>$lapso, 'carrera'=> $asignatura->sdd090d_cod_carr, 'asignatura'=>$asignatura->sdd090d_cod_asign, 'version'=>1])}}">PDF</a>
-                                        @endif
+                                <td class="estado">
+                                    {{-- @if(isset($asignatura->sdd210ds_estado))
+                                    pp {{$asignatura->sdd210ds_estado}}
+                                    @endif --}}
+                                    @if(isset($asignatura->sdd210ds_estado) && $asignatura->sdd210ds_estado == 'a ')
+                                        Actual
+                                        <a href="{{route('pdf.generarTematica', ['lapso'=>$lapso, 'carrera'=> $asignatura->sdd090d_cod_carr, 'asignatura'=>$asignatura->sdd090d_cod_asign, 'version'=>$asignatura->sdd210ds_version])}}">PDF</a>
+                                    @elseif(isset($asignatura->sdd210ds_estado) && $asignatura->sdd210ds_estado == 'v ')
+                                        Plan viejo
+                                        <a href="{{route('pdf.generarTematica', ['lapso'=>$lapso, 'carrera'=> $asignatura->sdd090d_cod_carr, 'asignatura'=>$asignatura->sdd090d_cod_asign, 'version'=>$asignatura->sdd210ds_version])}}">PDF</a>
+                                    @elseif(isset($asignatura->sdd210ds_estado) && $asignatura->sdd210ds_estado == 'ff')
+                                        completo
                                     @else
-                                    Pendiente
+                                        @if(isset($asignatura->sdd200d_estado))
+                                            @if($asignatura->sdd200d_estado == 'a ')
+                                            Asignado
+                                            @elseif($asignatura->sdd200d_estado == 'c ')
+                                            Creado por administrador
+                                            @elseif($asignatura->sdd200d_estado == 'rs')
+                                            En revision
+                                            @elseif($asignatura->sdd200d_estado == 'rj')
+                                            Pendiente por aprobacion
+                                            @elseif($asignatura->sdd200d_estado == 'ff')
+                                            Aprobado
+                                            <a href="{{route('pdf.generarTematica', ['lapso'=>$lapso, 'carrera'=> $asignatura->sdd090d_cod_carr, 'asignatura'=>$asignatura->sdd090d_cod_asign, 'version'=>1])}}">PDF</a>
+                                            @endif
+                                        @else
+                                        Pendiente
+                                        @endif
                                     @endif
                                 </td>
                                 <td>
@@ -86,7 +102,7 @@
                                     @else
                                     No asignado
                                     @endif
-                                    @if($asignatura->sdd200d_estado == 'ff')
+                                    @if($asignatura->sdd200d_estado == 'ff' || $asignatura->sdd210ds_estado == 'a ' || $asignatura->sdd210ds_estado == 'ff' || $asignatura->sdd210ds_estado =='a ')
                                     <p><a href="{{route('general.crearnuevaversionplan', ['lapso'=>$lapso, 'carrera'=> $asignatura->sdd090d_cod_carr, 'asignatura'=>$asignatura->sdd090d_cod_asign])}}" class="cta_nueva_version">
                                         Nueva version</a></p>
                                     @endif

@@ -179,24 +179,55 @@ Route::post('/plan/asignarasignatura', function (Request $request) {
     }else{
         $selresults=DB::table('sdd090ds')->where('sdd090d_lapso_vigencia','=',$lapso)->where('sdd090d_cod_carr', '=', $carrera)->whereIn('sdd090d_cod_asign', $asignaturas)->get();
 
+        // se busca si ya existen otras versiones del plan, y de ser asi se asigna la ultima version disponible
+        
         foreach ($selresults as $asignatura){
-            $asignacion = sdd200d::updateOrCreate(
-                [
-                    'sdd200d_plan_asignatura_id' => (int)$asignatura->id,
-                    'sdd200d_cod_asign'=> $asignatura->sdd090d_cod_asign,
-                    'sdd200d_nom_asign'=> $asignatura->sdd090d_nom_asign,
-                    'sdd200d_lapso_vigencia' => $asignatura->sdd090d_lapso_vigencia,
-                ],
-                [
-                    'sdd200d_plan_asignatura_id' => (int)$asignatura->id,
-                    'sdd200d_cod_carr' => $carrera,
-                    'sdd200d_cod_asign'=> $asignatura->sdd090d_cod_asign,
-                    'sdd200d_nom_asign'=> $asignatura->sdd090d_nom_asign,
-                    'sdd200d_lapso_vigencia' => $asignatura->sdd090d_lapso_vigencia,
-                    'sdd200d_inferior_asignado' => $indirecta,
-                    'sdd200d_superior_asignado' => $directa,
-                    'sdd200d_estado' => 'a',
-            ]);
+            $ultimaVersion = DB::table('sdd210ds')->select('sdd210ds_version')->where('sdd210d_lapso_vigencia','    =',$asignatura->sdd090d_lapso_vigencia)->where('sdd210d_cod_carr', '=', $asignatura->sdd090d_cod_carr)->where('sdd210d_cod_asign','=',$asignatura->sdd090d_cod_asign)->orderBy('sdd210ds_version', 'desc')->get()->first();
+            if($ultimaVersion){
+                // si tiene una version existente se le asigna la ultima
+                $versionActual = (int)$ultimaVersion->sdd210ds_version;
+                $asignacion = sdd200d::updateOrCreate(
+                    [
+                        'sdd200d_plan_asignatura_id' => (int)$asignatura->id,
+                        'sdd200d_cod_asign'=> $asignatura->sdd090d_cod_asign,
+                        'sdd200d_nom_asign'=> $asignatura->sdd090d_nom_asign,
+                        'sdd200d_cod_carr'=> $asignatura->sdd090d_cod_carr,
+                        'sdd200d_lapso_vigencia' => $asignatura->sdd090d_lapso_vigencia,
+                        'sdd200d_version' => $versionActual
+                    ],
+                    [
+                        'sdd200d_plan_asignatura_id' => (int)$asignatura->id,
+                        'sdd200d_cod_carr' => $carrera,
+                        'sdd200d_cod_asign'=> $asignatura->sdd090d_cod_asign,
+                        'sdd200d_nom_asign'=> $asignatura->sdd090d_nom_asign,
+                        'sdd200d_lapso_vigencia' => $asignatura->sdd090d_lapso_vigencia,
+                        'sdd200d_inferior_asignado' => $indirecta,
+                        'sdd200d_superior_asignado' => $directa,
+                        'sdd200d_estado' => 'a',
+                ]);
+
+            }else{
+                // si no existen versiones previas por defecto se crea y se asigna la 1
+                $asignacion = sdd200d::updateOrCreate(
+                    [
+                        'sdd200d_plan_asignatura_id' => (int)$asignatura->id,
+                        'sdd200d_cod_asign'=> $asignatura->sdd090d_cod_asign,
+                        'sdd200d_nom_asign'=> $asignatura->sdd090d_nom_asign,
+                        'sdd200d_cod_carr'=> $asignatura->sdd090d_cod_carr,
+                        'sdd200d_lapso_vigencia' => $asignatura->sdd090d_lapso_vigencia,
+                    ],
+                    [
+                        'sdd200d_plan_asignatura_id' => (int)$asignatura->id,
+                        'sdd200d_cod_carr' => $carrera,
+                        'sdd200d_cod_asign'=> $asignatura->sdd090d_cod_asign,
+                        'sdd200d_nom_asign'=> $asignatura->sdd090d_nom_asign,
+                        'sdd200d_lapso_vigencia' => $asignatura->sdd090d_lapso_vigencia,
+                        'sdd200d_inferior_asignado' => $indirecta,
+                        'sdd200d_superior_asignado' => $directa,
+                        'sdd200d_estado' => 'a',
+                ]);
+            }
+            
         }
 
         return redirect()->route('general.listarasignaturaslapsocarrera', ['lapso' => $lapso, 'carrera' => $carrera]);
@@ -372,7 +403,7 @@ Route::get('/{lapso}/{carrera}/asignaturas/lista', function(Request $reques,$lap
     //     $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
     // })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd090ds.sdd090d_cod_asign')->get();
 
-    $asignaturas = DB::table('sdd090ds')->distinct()->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado', 'sdd210ds_version')->leftjoin('sdd200ds', function($join){
+    $asignaturas = DB::table('sdd090ds')->distinct()->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado', 'sdd210ds_version', 'sdd210ds_estado')->leftjoin('sdd200ds', function($join){
         $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
     })->leftjoin('sdd210ds', function($join) use ($carrera, $lapso){
         $join->on(function($query) use($carrera, $lapso) {
@@ -383,13 +414,19 @@ Route::get('/{lapso}/{carrera}/asignaturas/lista', function(Request $reques,$lap
     })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd090ds.sdd090d_cod_asign')->orderBy('sdd210ds_version', 'ASC')->get();
     
     
-    error_log(DB::table('sdd090ds')->distinct()->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado', 'sdd210ds_version')->leftjoin('sdd200ds', function($join){
+    error_log(DB::table('sdd090ds')->distinct()->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado', 'sdd210ds_version', 'sdd210ds_estado')->leftjoin('sdd200ds', function($join){
         $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
     })->leftjoin('sdd210ds', function($join) use ($carrera, $lapso){
         $join->on(function($query) use($carrera, $lapso) {
             $query->on('sdd210ds.sdd210d_cod_carr', '=', 'sdd090ds.sdd090d_cod_carr');
             $query->on('sdd210ds.sdd210d_lapso_vigencia', '=', 'sdd090ds.sdd090d_lapso_vigencia');
             $query->on('sdd210ds.sdd210d_cod_asign', '=', 'sdd090ds.sdd090d_cod_asign');
+
+            //
+            $query->on('sdd210ds.sdd210d_cod_carr', '=', 'sdd200ds.sdd200d_cod_carr');
+            $query->on('sdd210ds.sdd210d_lapso_vigencia', '=', 'sdd200ds.sdd200d_lapso_vigencia');
+            $query->on('sdd210ds.sdd210d_cod_asign', '=', 'sdd200ds.sdd200d_cod_asign');
+            $query->on('sdd210ds.sdd210ds_version', '=', 'sdd200ds.sdd200d_version');
         });
     })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd090ds.sdd090d_cod_asign')->orderBy('sdd210ds_version', 'ASC')->toSql());
 
@@ -429,11 +466,11 @@ Route::get('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$l
 
 
     // se revisa que existe en la tabla detalle de plan
-    $existeplan = DB::table('sdd210ds')->select('*')->where('sdd210ds.sdd210d_lapso_vigencia', '=', $lapso)->where('sdd210ds.sdd210d_cod_carr', '=', $carrera)->where('sdd210ds.sdd210d_cod_asign', '=', $asignatura)->get()->first();
+    $existeplan = DB::table('sdd210ds')->select('*')->where('sdd210ds.sdd210d_lapso_vigencia', '=', $lapso)->where('sdd210ds.sdd210d_cod_carr', '=', $carrera)->where('sdd210ds.sdd210d_cod_asign', '=', $asignatura)->orderBy('sdd210ds.sdd210ds_version', 'desc')->get()->first();
 
     if($existeplan){
         // si existe un plan se manda a la vista editar
-        return redirect()->route('general.planeditar', ['lapso'=> $lapso, 'carrera'=>$carrera, 'asignatura'=>$asignatura]);
+        return redirect()->route('general.planeditar', ['lapso'=> $lapso, 'carrera'=>$carrera, 'asignatura'=>$asignatura, 'version'=>$existeplan->sdd210ds_version]);
     }
 
     // si es administrador puede ver cualquier pagina
@@ -455,7 +492,7 @@ Route::get('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$l
     
 })->middleware(['auth'])->name('general.plancrear');
 
-Route::get('/{lapso}/{carrera}/{asignatura}/{version}/editar', function(Request $request,$lapso,$carrera,$asignatura){
+Route::get('/{lapso}/{carrera}/{asignatura}/{version}/editar', function(Request $request,$lapso,$carrera,$asignatura,$version){
     error_log(Auth::user()->hasRole('administrador'));
 
     $asignaturaDetalle = DB::table('sdd090ds')->select('*')->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->where('sdd090ds.sdd090d_cod_asign', '=', $asignatura)->get()->first();
@@ -466,7 +503,7 @@ Route::get('/{lapso}/{carrera}/{asignatura}/{version}/editar', function(Request 
     }
 
     // se revisa que existe en la tabla detalle de plan
-    $plan = DB::table('sdd210ds')->select('*')->where('sdd210ds.sdd210d_lapso_vigencia', '=', $lapso)->where('sdd210ds.sdd210d_cod_carr', '=', $carrera)->where('sdd210ds.sdd210d_cod_asign', '=', $asignatura)->get()->first();
+    $plan = DB::table('sdd210ds')->select('*')->where('sdd210ds.sdd210d_lapso_vigencia', '=', $lapso)->where('sdd210ds.sdd210d_cod_carr', '=', $carrera)->where('sdd210ds.sdd210d_cod_asign', '=', $asignatura)->where('sdd210ds.sdd210ds_version', '=', $version)->orderBy('sdd210ds.sdd210ds_version', 'desc')->get()->first();
     error_log(json_encode($plan));
     if(!$plan){
         // si no existe un plan se manda a la vista crear
@@ -508,6 +545,12 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
     
     // si existe la asignatura
     if($existeasignatura){
+        // se obtiene la ultima version de la asignatura, siempre se actualiza la ultima version
+        $ultimaVersion = DB::table('sdd210ds')->select('sdd210ds_version')->where('sdd210d_lapso_vigencia','=',$lapso)->where('sdd210d_cod_carr', '=', $carrera)->where('sdd210d_cod_asign', $asignatura)->orderBy('sdd210ds_version', 'desc')->get()->first();
+        $version = 1;
+        if($ultimaVersion){
+            $version = $ultimaVersion->sdd210ds_version;
+        }
         // si el usuario con la sesion activa esta asignado se actualiza el estado
         if($asignado){
             if($asignado->sdd200d_superior_asignado == Auth::user()->cedula){
@@ -519,7 +562,8 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                     [
                         'sdd210d_cod_carr' => $asignado->sdd200d_cod_carr,
                         'sdd210d_cod_asign' =>  $asignado->sdd200d_cod_asign,
-                        'sdd210d_lapso_vigencia' =>  $asignado->sdd200d_lapso_vigencia
+                        'sdd210d_lapso_vigencia' =>  $asignado->sdd200d_lapso_vigencia,
+                        'sdd210ds_version' => $version
                     ],
                     [
                         'sdd210ds_as_proposito' =>Request::input('proposito'),
@@ -537,7 +581,8 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                         'sdd210ds_r_capacidades' =>Request::input('capacidades'),
                         'sdd210ds_r_habilidades' =>Request::input('habilidades'),
                         'sdd210ds_r_red_tematica' =>Request::input('red_tematica'),
-                        'sdd210ds_r_descripcion_red_tematica' => Request::input('descripcion_red_tematica')
+                        'sdd210ds_r_descripcion_red_tematica' => Request::input('descripcion_red_tematica'),
+                        'sdd210ds_estado' => 'rj'
                     ]
                     );
 
@@ -558,7 +603,8 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                         [
                             'sdd210d_cod_carr' => $asignado->sdd200d_cod_carr,
                             'sdd210d_cod_asign' =>  $asignado->sdd200d_cod_asign,
-                            'sdd210d_lapso_vigencia' =>  $asignado->sdd200d_lapso_vigencia
+                            'sdd210d_lapso_vigencia' =>  $asignado->sdd200d_lapso_vigencia,
+                            'sdd210ds_version' => $version
                         ],
                         [
                             'sdd210ds_as_proposito' =>Request::input('proposito'),
@@ -576,7 +622,8 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                             'sdd210ds_r_capacidades' =>Request::input('capacidades'),
                             'sdd210ds_r_habilidades' =>Request::input('habilidades'),
                             'sdd210ds_r_red_tematica' =>Request::input('red_tematica'),
-                            'sdd210ds_r_descripcion_red_tematica' => Request::input('descripcion_red_tematica')
+                            'sdd210ds_r_descripcion_red_tematica' => Request::input('descripcion_red_tematica'),
+                            'sdd210ds_estado' => 'rj'
                         ]
                         );
                     return redirect()->route('plan.mostrarasignados');
@@ -592,7 +639,8 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                         [
                             'sdd210d_cod_carr' => $asignado->sdd200d_cod_carr,
                             'sdd210d_cod_asign' =>  $asignado->sdd200d_cod_asign,
-                            'sdd210d_lapso_vigencia' =>  $asignado->sdd200d_lapso_vigencia
+                            'sdd210d_lapso_vigencia' =>  $asignado->sdd200d_lapso_vigencia,
+                            'sdd210ds_version' => $version
                         ],
                         [
                             'sdd210ds_as_proposito' =>Request::input('proposito'),
@@ -610,7 +658,8 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                             'sdd210ds_r_capacidades' =>Request::input('capacidades'),
                             'sdd210ds_r_habilidades' =>Request::input('habilidades'),
                             'sdd210ds_r_red_tematica' =>Request::input('red_tematica'),
-                            'sdd210ds_r_descripcion_red_tematica' => Request::input('descripcion_red_tematica')
+                            'sdd210ds_r_descripcion_red_tematica' => Request::input('descripcion_red_tematica'),
+                            'sdd210ds_estado' => 'rs'
                         ]
                         );
                     return redirect()->route('plan.mostrarasignados');
@@ -622,14 +671,23 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
             $estado = App\Models\sdd200d::where('sdd200d_cod_carr', '=', $carrera)->where('sdd200d_cod_asign', '=', $asignatura)->where('sdd200d_lapso_vigencia', '=',$lapso)->first();
             // si tiene estado rj o c o ff esta en su estado de aprobacion final, por lo que se actualiza
             if( isset($estado->sdd200d_estado) && ($estado->sdd200d_estado == 'rj' || $estado->sdd200d_estado == 'c ' || $estado->sdd200d_estado == 'ff')){
-                $estado->sdd200d_estado ='ff';
-                $estado->save();
+                // $estado->sdd200d_estado ='ff';
+                // $estado->save();
+
+                // se elimina el estado ya que esta completo, ya no tiene a nadie asignado
+                $estado->delete();
+
+                // se actualizan los estados de los planes viejos
+                sdd210d::where('sdd210ds_estado','=','a')->where('sdd210d_cod_carr', '=', $carrera)->where('sdd210d_cod_asign', '=', $asignatura)->where('sdd210d_lapso_vigencia', '=',$lapso)->update(['sdd210ds_estado'=>'v']);
+
                 //guardar datos
                 sdd210d::updateOrCreate(
                     [
                         'sdd210d_cod_carr' => $estado->sdd200d_cod_carr,
                         'sdd210d_cod_asign' =>  $estado->sdd200d_cod_asign,
-                        'sdd210d_lapso_vigencia' =>  $estado->sdd200d_lapso_vigencia
+                        'sdd210d_lapso_vigencia' =>  $estado->sdd200d_lapso_vigencia,
+                        'sdd210ds_version' => $version,
+                        
                     ],
                     [
                         'sdd210ds_as_proposito' =>Request::input('proposito'),
@@ -647,9 +705,12 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                         'sdd210ds_r_capacidades' =>Request::input('capacidades'),
                         'sdd210ds_r_habilidades' =>Request::input('habilidades'),
                         'sdd210ds_r_red_tematica' =>Request::input('red_tematica'),
-                        'sdd210ds_r_descripcion_red_tematica' => Request::input('descripcion_red_tematica')
+                        'sdd210ds_r_descripcion_red_tematica' => Request::input('descripcion_red_tematica'),
+                        'sdd210ds_estado' => 'a'
                     ]
-                );
+                    );
+
+                
 
             }else{
                 // si no tiene estado es creado por el administrador
@@ -660,7 +721,7 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                         'sdd200d_cod_asign'=> $existeasignatura->sdd090d_cod_asign,
                         'sdd200d_lapso_vigencia' => $existeasignatura->sdd090d_lapso_vigencia,
                         'sdd200d_cod_carr' =>$existeasignatura->sdd090d_cod_carr,
-                        
+                        'sdd200d_version' => $version
                     ],
                     [
                         'sdd200d_nom_asign' => $existeasignatura->sdd090d_nom_asign,
@@ -675,7 +736,8 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                 [
                     'sdd210d_cod_carr' => $existeasignatura->sdd090d_cod_carr,
                     'sdd210d_cod_asign' =>  $existeasignatura->sdd090d_cod_asign,
-                    'sdd210d_lapso_vigencia' =>  $existeasignatura->sdd090d_lapso_vigencia
+                    'sdd210d_lapso_vigencia' =>  $existeasignatura->sdd090d_lapso_vigencia,
+                    'sdd210ds_version' => $version
                 ],
                 [
                     'sdd210ds_as_proposito' =>Request::input('proposito'),
@@ -693,7 +755,8 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                     'sdd210ds_r_capacidades' =>Request::input('capacidades'),
                     'sdd210ds_r_habilidades' =>Request::input('habilidades'),
                     'sdd210ds_r_red_tematica' =>Request::input('red_tematica'),
-                    'sdd210ds_r_descripcion_red_tematica' => Request::input('descripcion_red_tematica')
+                    'sdd210ds_r_descripcion_red_tematica' => Request::input('descripcion_red_tematica'),
+                    'sdd210ds_estado' => 'c'
                 ]
                 );
             }
@@ -736,7 +799,7 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crearVersion', function(Request $re
 
     if($asignaturaRes && $carreraRes){
         // busca versiones existentes y seleccionamos la mas alta
-        $versionMasAlta = DB::table('sdd210ds')->select('sdd210ds.sdd210ds_version')->where('sdd210ds.sdd210d_lapso_vigencia', '=', $lapso)->where('sdd210ds.sdd210d_cod_carr', '=', $carrera)->where('sdd210ds.sdd210d_cod_asign', '=', $asignatura)->orderBy('sdd210ds.sdd210ds_version', 'DESC')->get()->first();
+        $versionMasAlta = DB::table('sdd210ds')->select('*')->where('sdd210ds.sdd210d_lapso_vigencia', '=', $lapso)->where('sdd210ds.sdd210d_cod_carr', '=', $carrera)->where('sdd210ds.sdd210d_cod_asign', '=', $asignatura)->orderBy('sdd210ds.sdd210ds_version', 'DESC')->get()->first();
         error_log(json_encode($versionMasAlta));
         error_log($lapso);
         
@@ -749,8 +812,13 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crearVersion', function(Request $re
             $version = ++$version;
             error_log($version);
 
-            // se crea una nueva version 
-            sdd210d::create(['sdd210ds_version'=>$version, 'sdd210d_lapso_vigencia'=>$lapso, 'sdd210d_cod_carr'=>$carrera, 'sdd210d_cod_asign'=>$asignatura]);
+            $toreplicate = sdd210d::where('sdd210ds.sdd210d_lapso_vigencia', '=', $lapso)->where('sdd210ds.sdd210d_cod_carr', '=', $carrera)->where('sdd210ds.sdd210d_cod_asign', '=', $asignatura)->orderBy('sdd210ds.sdd210ds_version', 'DESC')->get()->first();
+            // se crea una nueva version con los mismos datos que el pasado
+            $nuevo = $toreplicate->replicate();
+            $nuevo->sdd210ds_estado ='nv';
+            $nuevo->sdd210ds_version = $version;
+            $nuevo->save();
+            // sdd210d::create(['sdd210ds_version'=>$version, 'sdd210d_lapso_vigencia'=>$lapso, 'sdd210d_cod_carr'=>$carrera, 'sdd210d_cod_asign'=>$asignatura]);
         }else{
             // se crea una version
             sdd210d::create(['sdd210ds_version'=>1, 'sdd210d_lapso_vigencia'=>$lapso, 'sdd210d_cod_carr'=>$carrera, 'sdd210d_cod_asign'=>$asignatura]);

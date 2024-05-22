@@ -30,6 +30,7 @@ class sdd210d extends Model
         'sdd210ds_r_habilidades',
         'sdd210ds_r_red_tematica',
         'sdd210ds_r_red_tematica_foto',
-        'sdd210ds_r_descripcion_red_tematica'
+        'sdd210ds_r_descripcion_red_tematica',
+        'sdd210ds_estado'
     ];
 }
