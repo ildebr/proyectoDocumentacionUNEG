@@ -14,4 +14,11 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         //
     ];
+
+    protected static $serialize = true;
+
+    public static function serialized()
+    {
+        return true;
+    }
 }

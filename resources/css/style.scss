@@ -100,3 +100,37 @@ label{
     display: block;
     width: 100%;
 }
+
+.cta{
+
+}
+
+
+.cta-primary{
+    padding: .5rem;
+    border-radius: 6px;
+    background-color: #0075f7;
+    color: white;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.cta-secondary{
+    padding: .5rem;
+    border-radius: 6px;
+    background-color: #19f700;
+    color: white;
+    display: inline-block;
+}
+
+.mb-2{
+    margin-bottom: 5px;
+}
+
+tr > td:last-of-type{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    // gap: 5px;
+}

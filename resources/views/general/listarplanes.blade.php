@@ -85,7 +85,7 @@
                             <td>{{$plan->sdd100d_cod_carr}}</td>
                             <td>{{$plan->sdd080d_nom_carr}}</td>
                             <td class="estado">{{$plan->sdd100d_status}}</td>
-                            <td><a href="{{ route('general.listarasignaturaslapsocarrera', ['lapso'=>$plan->sdd100d_lapso, 'carrera'=>$plan->sdd100d_cod_carr]) }}">Asignaturas</a></td>
+                            <td><a class="cta cta-primary" href="{{ route('general.listarasignaturaslapsocarrera', ['lapso'=>$plan->sdd100d_lapso, 'carrera'=>$plan->sdd100d_cod_carr]) }}">Asignaturas</a></td>
                         </tr>
                         @endforeach
 

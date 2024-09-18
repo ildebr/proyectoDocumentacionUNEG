@@ -9,6 +9,8 @@ use App\Models\sdd080d;
 use App\Models\sdd100d;
 use App\Models\sdd200d;
 use App\Models\sdd210d;
+use App\Models\sdd215d;
+use App\Models\sdd095d;
 
 /*
 |--------------------------------------------------------------------------
@@ -403,7 +405,7 @@ Route::get('/{lapso}/{carrera}/asignaturas/lista', function(Request $reques,$lap
     //     $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
     // })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd090ds.sdd090d_cod_asign')->get();
 
-    $asignaturas = DB::table('sdd090ds')->distinct()->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado', 'sdd210ds_version', 'sdd210ds_estado')->leftjoin('sdd200ds', function($join){
+    $asignaturas = DB::table('sdd090ds')->distinct()->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado', 'sdd210ds_version', 'sdd210ds_estado','sdd110d_semestre')->leftjoin('sdd200ds', function($join){
         $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
     })->leftjoin('sdd210ds', function($join) use ($carrera, $lapso){
         $join->on(function($query) use($carrera, $lapso) {
@@ -411,10 +413,23 @@ Route::get('/{lapso}/{carrera}/asignaturas/lista', function(Request $reques,$lap
             $query->on('sdd210ds.sdd210d_lapso_vigencia', '=', 'sdd090ds.sdd090d_lapso_vigencia');
             $query->on('sdd210ds.sdd210d_cod_asign', '=', 'sdd090ds.sdd090d_cod_asign');
         });
-    })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd090ds.sdd090d_cod_asign')->orderBy('sdd210ds_version', 'ASC')->get();
+    })
+    ->leftjoin('sdd110ds', function($join) use ($carrera, $lapso){
+        $join->on(function($query) use($carrera, $lapso) {
+            $query->on('sdd110ds.sdd110d_cod_carr', '=', 'sdd090ds.sdd090d_cod_carr');
+            $query->on('sdd110ds.sdd110d_lapso_vigencia', '=', 'sdd090ds.sdd090d_lapso_vigencia');
+            $query->on('sdd110ds.sdd110d_cod_asign', '=', 'sdd090ds.sdd090d_cod_asign');
+        });
+        
+    })
+    ->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)
+    ->orderBy('sdd110d_semestre')
+    // ->orderByRaw('CASE WHEN "sdd110d_semestre" = '."0".' THEN '.'"asdf"'.' ELSE "sdd110d_semestre" END DESC, "sdd110d_semestre" ASC')
+    ->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd090ds.sdd090d_cod_asign')->orderBy('sdd210ds_version', 'ASC')
+    ->get();
     
     
-    error_log(DB::table('sdd090ds')->distinct()->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado', 'sdd210ds_version', 'sdd210ds_estado')->leftjoin('sdd200ds', function($join){
+    error_log(json_encode(DB::table('sdd090ds')->distinct()->select('sdd090d_cod_carr', 'sdd090d_cod_asign', 'sdd090ds.id as id', 'sdd090d_nom_asign', 'sdd090d_uc', 'sdd200d_inferior_asignado','sdd090d_nivel_asignatura', 'sdd200d_superior_asignado','sdd200d_estado', 'sdd210ds_version', 'sdd210ds_estado','sdd110d_semestre')->leftjoin('sdd200ds', function($join){
         $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
     })->leftjoin('sdd210ds', function($join) use ($carrera, $lapso){
         $join->on(function($query) use($carrera, $lapso) {
@@ -423,15 +438,23 @@ Route::get('/{lapso}/{carrera}/asignaturas/lista', function(Request $reques,$lap
             $query->on('sdd210ds.sdd210d_cod_asign', '=', 'sdd090ds.sdd090d_cod_asign');
 
             //
-            $query->on('sdd210ds.sdd210d_cod_carr', '=', 'sdd200ds.sdd200d_cod_carr');
-            $query->on('sdd210ds.sdd210d_lapso_vigencia', '=', 'sdd200ds.sdd200d_lapso_vigencia');
-            $query->on('sdd210ds.sdd210d_cod_asign', '=', 'sdd200ds.sdd200d_cod_asign');
-            $query->on('sdd210ds.sdd210ds_version', '=', 'sdd200ds.sdd200d_version');
+            // $query->on('sdd210ds.sdd210d_cod_carr', '=', 'sdd200ds.sdd200d_cod_carr');
+            // $query->on('sdd210ds.sdd210d_lapso_vigencia', '=', 'sdd200ds.sdd200d_lapso_vigencia');
+            // $query->on('sdd210ds.sdd210d_cod_asign', '=', 'sdd200ds.sdd200d_cod_asign');
+            // $query->on('sdd210ds.sdd210ds_version', '=', 'sdd200ds.sdd200d_version');
         });
-    })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd090ds.sdd090d_cod_asign')->orderBy('sdd210ds_version', 'ASC')->toSql());
+    })->leftjoin('sdd110ds', function($join) use ($carrera, $lapso){
+        $join->on(function($query) use($carrera, $lapso) {
+            $query->on('sdd110ds.sdd110d_cod_carr', '=', 'sdd090ds.sdd090d_cod_carr');
+            $query->on('sdd110ds.sdd110d_lapso_vigencia', '=', 'sdd090ds.sdd090d_lapso_vigencia');
+            $query->on('sdd110ds.sdd110d_cod_asign', '=', 'sdd090ds.sdd090d_cod_asign');
+        });
+        
+    })
+    ->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_cod_asign')->orderBy('sdd090ds.sdd090d_nivel_asignatura')->orderBy('sdd210ds_version', 'ASC')->get()->first()));
+    //hereeee
 
-
-    // error_log(json_encode($asignaturas));
+    // error_log(json_encode($asignaturas[0]));
     // error_log(DB::table('sdd090ds')->select('sdd200ds.id as status_id','*')->leftjoin('sdd200ds', function($join){
     //     $join->on('sdd090ds.id', '=', 'sdd200ds.sdd200d_plan_asignatura_id');
     // })->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->toSql());
@@ -445,11 +468,94 @@ Route::get('/{lapso}/{carrera}/asignaturas/lista', function(Request $reques,$lap
 
 //Relacion de asignaturas
 Route::get('/{lapso}/{carrera}/relacion/crear', function(Request $reques,$lapso,$carrera){
-
+    // se listan las asignaturas para relacionar
+    $relacion = DB::table('sdd095ds')->select('*')->where('sdd095_lapso_vigencia', '=', $lapso)->where('sdd095_cod_carr', '=', $carrera)->get();
     $asignaturas = DB::table('sdd090ds')->select('*')->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->get();
     $carrera = App\Models\sdd080d::where('sdd080d_cod_carr', '=', $carrera)->get()->first();
-    return view('asignaturas.relacionarasignaturas',compact('asignaturas', 'carrera', 'lapso'));
+    
+    error_log(DB::table('sdd095ds')->select('*')->where('sdd095_lapso_vigencia', '=', $lapso)->where('sdd095_cod_carr', '=', $carrera)->toSql());
+    error_log(json_encode($relacion));
+    error_log($lapso);
+    error_log($carrera);
+    return view('asignaturas.relacionarasignaturas',compact('asignaturas', 'carrera', 'lapso', 'relacion'));
 })->middleware(['auth','role:administrador'])->name('asignaturas.relacionarasignaturas');
+
+//Relacion de asignaturas post
+Route::post('/{lapso}/{carrera}/relacion/crearr', function(\Illuminate\Http\Request $reques, $lapso, $carrera){
+    // aqui se reciben los datos de las asignaturas relacioandas desde el front y se envia una respuesta
+
+    // error_log('alo');
+    error_log(Request::input('alo'));
+    // error_log(json_encode($reques::all()));
+    // error_log(json_encode($reques->all()));
+    error_log(json_encode(Request::all()));
+    error_log(json_encode(Request::input('data')));
+
+    $datarelacion = json_decode(Request::input('data'));
+
+    error_log(json_encode($datarelacion[0]));
+    error_log(json_encode($datarelacion[0]->asignatura));
+    error_log(json_encode($datarelacion[0]->relacion));
+    error_log(count($datarelacion[0]->relacion));
+
+    
+    
+
+
+    //despues se crean los nuevos
+    // sdd095d::updateOrCreate(
+    //     [
+    //         'sdd095_lapso_vigencia'
+    //         'sdd095_cod_carr', 
+    //         'sdd095_cod_asign'
+    //     ]
+    // )
+
+    try{
+        //primero se eliminan los viejos valores de temas relacionados
+        DB::table('sdd095ds')->where('sdd095_lapso_vigencia', '=', $lapso)->where('sdd095_cod_carr', '=', $carrera)->delete();
+        
+        //se asignan los nuevos temas
+        for($i = 0 ; $i < count($datarelacion); $i++){
+            if(count($datarelacion[$i]->relacion) <= 0){
+                
+                continue;
+            }elseif(count($datarelacion[$i]->relacion) == 1){
+
+
+                DB::table('sdd095ds')->insert([
+                    'sdd095_lapso_vigencia' => $lapso,
+                    'sdd095_cod_carr' => $carrera, 
+                    'sdd095_cod_asign' => $datarelacion[$i]->asignatura,
+                    'sdd095_nom_asignatura' => $datarelacion[$i]->nombre,
+                    'sdd095_asignatura_relacion_cod' => $datarelacion[$i]->relacion[0]->id,
+                    'sdd095_asignatura_relacion_nombre' => $datarelacion[$i]->relacion[0]->nombre
+                ]);
+            }else{
+                for($j=0; $j < count($datarelacion[$i]->relacion) ; $j++){
+                    DB::table('sdd095ds')->insert([
+                        'sdd095_lapso_vigencia' => $lapso,
+                        'sdd095_cod_carr' => $carrera, 
+                        'sdd095_cod_asign' => $datarelacion[$i]->asignatura,
+                        'sdd095_nom_asignatura' => $datarelacion[$i]->nombre,
+                        'sdd095_asignatura_relacion_cod' => $datarelacion[$i]->relacion[$j]->id,
+                        'sdd095_asignatura_relacion_nombre' => $datarelacion[$i]->relacion[$j]->nombre
+                    ]);
+                }
+            }
+
+            error_log(json_encode($datarelacion[$i]->relacion));
+        }
+    }catch (Exception $e){
+        return response()->json(array('msg'=> 'Error al insertar'), 400);
+    }
+
+    
+
+    //aqui
+
+    return response()->json(array('msg'=> 'insertado exitosamente'), 200);
+})->middleware(['auth','role:administrador'])->name('asignaturas.relacionarasignaturass');
 
 
 //Creacion-detalle planes
@@ -502,6 +608,9 @@ Route::get('/{lapso}/{carrera}/{asignatura}/{version}/editar', function(Request 
         abort(403, 'No existe esta pagina');
     }
 
+    //se obtienen los temas de esta asignatura
+
+
     // se revisa que existe en la tabla detalle de plan
     $plan = DB::table('sdd210ds')->select('*')->where('sdd210ds.sdd210d_lapso_vigencia', '=', $lapso)->where('sdd210ds.sdd210d_cod_carr', '=', $carrera)->where('sdd210ds.sdd210d_cod_asign', '=', $asignatura)->where('sdd210ds.sdd210ds_version', '=', $version)->orderBy('sdd210ds.sdd210ds_version', 'desc')->get()->first();
     error_log(json_encode($plan));
@@ -514,7 +623,12 @@ Route::get('/{lapso}/{carrera}/{asignatura}/{version}/editar', function(Request 
 
     // si es administrador puede ver cualquier pagina
     if(Auth::user()->hasRole('administrador')){
-        return view('general.cargaplandetalleeditar')->with('asignatura', $asignaturaDetalle)->with('plan', $plan)->with(compact('estado'));
+
+        // se obtienen los temas
+        $temas = DB::table('sdd215ds')->select('*')->where('sdd215d_cod_carr', '=', $carrera)->where('sdd215d_cod_asign', '=', $asignatura)->where('sdd215d_lapso_vigencia', '=',$lapso)->get();
+        error_log('alo');
+        error_log(json_encode($temas));
+        return view('general.cargaplandetalleeditar')->with('asignatura', $asignaturaDetalle)->with('plan', $plan)->with(compact('estado','temas'));
     }else{
         // Revisa que el usuario con la sesion activa este asignado
         // limitar a que vea solo a la que esta asignado
@@ -524,15 +638,42 @@ Route::get('/{lapso}/{carrera}/{asignatura}/{version}/editar', function(Request 
         if(count($asignados) ==0){
             abort(403, 'No tienes permiso para ver esta pagina');
         }else{
-            return view('general.cargaplandetalleeditar')->with('asignatura', $asignaturaDetalle)->with('plan', $plan)->with(compact('estado'));
+            error_log('alo2');
+            $temas = DB::table('sdd215ds')->select('*')->where('sdd215d_cod_carr', '=', $carrera)->where('sdd215d_cod_asign', '=', $asignatura)->where('sdd215d_lapso_vigencia', '=',$lapso)->get();
+            error_log(json_encode($temas));
+            return view('general.cargaplandetalleeditar')->with('asignatura', $asignaturaDetalle)->with('plan', $plan)->with(compact('estado', 'temas'));
         }
     }
 })->middleware(['auth'])->name('general.planeditar');
 
 // cargar datos del plan
 Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$lapso,$carrera,$asignatura){
-    error_log(json_encode(Request::all()));
-    // update or create state 
+
+    // error_log(json_encode(Request::all()));
+    // error_log(json_encode(Request::input('temario')));
+    $temario = Request::input('temario');
+    error_log(Auth::id());
+
+    foreach($temario as $tema){
+        error_log(json_encode($tema));
+        error_log($tema['nombre']);
+        sdd215d::updateOrCreate([
+            'sdd215d_cod_carr' => $carrera,
+            'sdd215d_cod_asign' => $asignatura,
+            'sdd215d_lapso_vigencia' => $lapso,
+            'sdd215ds_orden_tema' => (int)$tema['orden'] + 1
+        ], [
+            // 'sdd215d_version' => 1,
+        
+            
+            'sdd215ds_nombre_tema' => $tema['nombre'],
+            'sdd215ds_contenido_tema' => $tema['contenido'],
+            'sdd215ds_profesor_creador' => Auth::id()
+        ]);
+    }
+
+    
+    // // update or create state 
 
     //se verifica que la asignatura exista
     $existeasignatura=DB::table('sdd090ds')->where('sdd090d_lapso_vigencia','=',$lapso)->where('sdd090d_cod_carr', '=', $carrera)->where('sdd090d_cod_asign', $asignatura)->first();
@@ -557,6 +698,25 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
                 // si es el superior se envia al jefe de departamento
                 $asignado->sdd200d_estado = 'rj';
                 $asignado->save();
+
+                // se guardan los temas
+                foreach($temario as $tema){
+                    error_log(json_encode($tema));
+                    error_log($tema['nombre']);
+                    sdd215d::updateOrCreate([
+                        'sdd215d_cod_carr' => $carrera,
+                        'sdd215d_cod_asign' => $asignatura,
+                        'sdd215d_lapso_vigencia' => $lapso,
+                        'sdd215ds_orden_tema' => (int)$tema['orden'] + 1
+                    ], [
+                        // 'sdd215d_version' => 1,
+                    
+                        
+                        'sdd215ds_nombre_tema' => $tema['nombre'],
+                        'sdd215ds_contenido_tema' => $tema['contenido'],
+                        'sdd215ds_profesor_creador' => Auth::id()
+                    ]);
+                }
 
                 sdd210d::updateOrCreate(
                     [
@@ -667,6 +827,24 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crear', function(Request $request,$
 
             }
         }elseif(Auth::user()->hasRole('administrador')){
+            // se guardan los temas
+            foreach($temario as $tema){
+                error_log(json_encode($tema));
+                error_log($tema['nombre']);
+                sdd215d::updateOrCreate([
+                    'sdd215d_cod_carr' => $carrera,
+                    'sdd215d_cod_asign' => $asignatura,
+                    'sdd215d_lapso_vigencia' => $lapso,
+                    'sdd215ds_orden_tema' => (int)$tema['orden'] + 1
+                ], [
+                    // 'sdd215d_version' => 1,
+                
+                    
+                    'sdd215ds_nombre_tema' => $tema['nombre'],
+                    'sdd215ds_contenido_tema' => $tema['contenido'],
+                    'sdd215ds_profesor_creador' => Auth::id()
+                ]);
+            }
             // se revisa si tiene estado
             $estado = App\Models\sdd200d::where('sdd200d_cod_carr', '=', $carrera)->where('sdd200d_cod_asign', '=', $asignatura)->where('sdd200d_lapso_vigencia', '=',$lapso)->first();
             // si tiene estado rj o c o ff esta en su estado de aprobacion final, por lo que se actualiza
@@ -832,6 +1010,73 @@ Route::post('/{lapso}/{carrera}/{asignatura}/crearVersion', function(Request $re
 })->middleware(['auth','role:administrador'])->name('general.crearnuevaversionplan');
 
 
+Route::get('/{lapso}/{carrera}/relacionartemas', function(Request $request, $lapso, $carrera){
+    // sdd215d::select('*');
+
+    $temasrelacionados = DB::table('sdd216ds')->select('*')->where('sdd216d_lapso_vigencia', '=', $lapso)->where('sdd216d_cod_carr', '=', $carrera)->get();
+
+    //todos los temas de esta carrera en este lapso
+    $temas = DB::table('sdd215ds')->select('*')->where('sdd215ds.sdd215d_lapso_vigencia', '=', $lapso)->where('sdd215ds.sdd215d_cod_carr', '=', $carrera)->orderBy('sdd215ds.created_at')->get();
+
+    // todas las asignaturas de esta carrera en este lapso
+    $asignaturas = DB::table('sdd090ds')->select('*')->where('sdd090ds.sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090ds.sdd090d_cod_carr', '=', $carrera)->orderBy('sdd090ds.sdd090d_nivel_asignatura')->get();
+
+    // las asignaturas relacionadas
+    // DB::table('sdd095ds')->select('*')->where('sdd095_lapso_vigencia', '=', $lapso)->where('sdd095_cod_carr', '=', $carrera)->get();
+    $asignaturasrelacionadas =DB::table('sdd095ds')->select('*')->where('sdd095_lapso_vigencia', '=', $lapso)->where('sdd095_cod_carr', '=', $carrera)->get();
+
+    // los datos de la carrera
+    $carrera = App\Models\sdd080d::where('sdd080d_cod_carr', '=', $carrera)->get()->first();
+
+    
+
+    
+
+    return view('asignaturas.relacionartemaasignaturas')->with(compact('temas', 'asignaturas', 'carrera', 'lapso', 'asignaturasrelacionadas', 'temasrelacionados'));
+    
+})->middleware(['auth','role:administrador'])->name('asignaturas.relacionartemas');
+
+Route::post('/{lapso}/{carrera}/relacionartemas', function(Request $request, $lapso, $carrera){
+    $datarelacion = json_decode(Request::input('data'));
+    error_log(json_encode($datarelacion));
+    try{
+        //primero se eliminan los viejos valores de temas relacionados
+        DB::table('sdd216ds')->where('sdd216d_lapso_vigencia', '=', $lapso)->where('sdd216d_cod_carr', '=', $carrera)->delete();
+        for($i = 0 ; $i < count($datarelacion); $i++){
+            error_log('i'.$i.'   '.count($datarelacion) );
+            for($j = 0 ; $j < count($datarelacion[$i]->relaciones); $j++){
+                error_log('j'.$j. '   '. count($datarelacion[$i]->relaciones));
+                DB::table('sdd216ds')->insert([
+                    "sdd216d_lapso_vigencia" => $lapso, 
+                    "sdd216d_cod_carr" => $carrera, 
+                    "sdd216d_cod_asign" => $datarelacion[$i]->asignaturaPadre, 
+                    "sdd216d_cod_asign_relacion" => $datarelacion[$i]->relaciones[$j]->asignatura, 
+                    "sdd216d_nom_asignatura" => $datarelacion[$i]->asignaturaPadreNombre, 
+                    "sdd216d_nom_asignatura_relacion" => $datarelacion[$i]->relaciones[$j]->asignaturaNombre,
+                    "sdd216d_id_tema_asignatura_principal" => $datarelacion[$i]->temaId, 
+                    "sdd216d_nom_tema_asignatura_principal" => $datarelacion[$i]->temaPadreNombre, 
+                    "sdd216d_id_tema_asignatura_relacion" => $datarelacion[$i]->relaciones[$j]->temaId, 
+                    "sdd216d_nom_tema_asignatura_relacion" => $datarelacion[$i]->relaciones[$j]->temaNombre
+                ]);
+            }
+            
+        }
+        
+        
+        //se asignan los nuevos temas
+    }catch (Exception $e){
+        error_log(json_encode($e));
+        return response()->json(array('msg'=> 'Error al insertar '.$e), 400);
+        
+    }
+
+    error_log('here');
+    return response()->json(array('msg'=> 'insertado exitosamente'), 200);
+    
+})->middleware(['auth','role:administrador'])->name('asignaturas.relacionartemas');
+
+
+
 Route::get('/asignar', function(Request $request){
     $input = Request::all();
     error_log(json_encode($input));
@@ -862,6 +1107,12 @@ Route::get('/plan/lista', function(){
 
 })->middleware(['auth','role:administrador'])->name('general.listarplanes');
 
+
+
+//RELACIONAR ASIGNATURAS
+// Route::get('/{lapso}/{carrera}/asignaturas/relacionar', function(Request $reques,$lapso,$carrera){
+//     $asignaturas = DB::table('sdd090ds')->select('*')
+// })->middleware(['auth','role:administrador'])->name('general.relacionarasignaturas');
 
 
 

@@ -1,4 +1,26 @@
 h2{
-    background-color: red !important;
+    /* background-color: red !important; */
     padding: 1rem;
+}
+
+
+.seccion-aterrizaje h1{
+    font-size: 2rem;
+}
+
+
+.cta{
+
+}
+
+
+.cta-primary{
+    padding: .5rem;
+    border-radius: 6px;
+    background-color: #0075f7;
+    color: white;
+}
+
+body{
+    /* background-color: pink; */
 }

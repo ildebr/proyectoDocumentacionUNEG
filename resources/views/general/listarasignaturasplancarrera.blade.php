@@ -18,7 +18,8 @@
 
                     <p>Para asignar asignaturas a un profesor/coordinador selecciona las asignaturas primero y despues presiona el boton asignar.</p>
 
-                    <a href="{{route('asignaturas.relacionarasignaturas', ['lapso'=>$lapso, 'carrera' => $carrera['sdd080d_cod_carr']])}}" class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded inline-block mt-4"><strong>Relacion</strong></a>
+                    <a href="{{route('asignaturas.relacionarasignaturas', ['lapso'=>$lapso, 'carrera' => $carrera['sdd080d_cod_carr']])}}" class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded inline-block mt-4"><strong>Relacionar asignaturas</strong></a>
+                    <a href="{{route('asignaturas.relacionartemas',['lapso'=>$lapso, 'carrera' => $carrera['sdd080d_cod_carr']])}}"  class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded inline-block mt-4">Relacionar temas de asignaturas</a>
                     <a href="{{route('general.asignarasignatura')}}" class="asignar-btn bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded inline-block">Asignar</a>
                     <p class="error_msg"></p>
                     <h3>Filtros avanzados</h3>
@@ -37,6 +38,7 @@
                             <tr>
                                 <th></th>
                                 <th>id</th>
+                                <th>Semestre</th>
                                 <th>Asignatura</th>
                                 <th>Codigo</th>
                                 <th>Nivel</th>
@@ -55,6 +57,7 @@
                             @endif
                                 <td><input type="checkbox" value="{{$asignatura->sdd090d_cod_asign}}"></td>
                                 <td>{{$asignatura->id}}</td>
+                                <td>{{$asignatura->sdd110d_semestre}}</td>
                                 <td>{{$asignatura->sdd090d_nom_asign}}</td>
                                 <td>{{$asignatura->sdd090d_cod_asign}}</td>
                                 <td>{{$asignatura->sdd090d_nivel_asignatura}}</td>
@@ -83,7 +86,7 @@
                                             Pendiente por aprobacion
                                             @elseif($asignatura->sdd200d_estado == 'ff')
                                             Aprobado
-                                            <a href="{{route('pdf.generarTematica', ['lapso'=>$lapso, 'carrera'=> $asignatura->sdd090d_cod_carr, 'asignatura'=>$asignatura->sdd090d_cod_asign, 'version'=>1])}}">PDF</a>
+                                            <a class="cta cta-primary" href="{{route('pdf.generarTematica', ['lapso'=>$lapso, 'carrera'=> $asignatura->sdd090d_cod_carr, 'asignatura'=>$asignatura->sdd090d_cod_asign, 'version'=>1])}}">PDF</a>
                                             @endif
                                         @else
                                         Pendiente
@@ -91,7 +94,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{route('general.plancrear', ['lapso'=>$lapso, 'carrera' => $carrera['sdd080d_cod_carr'], 'asignatura'=> $asignatura->sdd090d_cod_asign])}}">Revisar</a>
+                                    <a class="cta cta-primary mb-2" href="{{route('general.plancrear', ['lapso'=>$lapso, 'carrera' => $carrera['sdd080d_cod_carr'], 'asignatura'=> $asignatura->sdd090d_cod_asign])}}">Revisar</a>
                                     {{-- @if($asignatura->sdd200d_estado)
                                     <a href="{{route('general.plancrear', ['lapso'=>$lapso, 'carrera' => $carrera['sdd080d_cod_carr'], 'asignatura'=> $asignatura->sdd090d_cod_asign])}}">Revisar</a>
                                     @else
@@ -103,7 +106,7 @@
                                     No asignado
                                     @endif
                                     @if($asignatura->sdd200d_estado == 'ff' || $asignatura->sdd210ds_estado == 'a ' || $asignatura->sdd210ds_estado == 'ff' || $asignatura->sdd210ds_estado =='a ')
-                                    <p><a href="{{route('general.crearnuevaversionplan', ['lapso'=>$lapso, 'carrera'=> $asignatura->sdd090d_cod_carr, 'asignatura'=>$asignatura->sdd090d_cod_asign])}}" class="cta_nueva_version">
+                                    <p><a class="cta cta-primary" href="{{route('general.crearnuevaversionplan', ['lapso'=>$lapso, 'carrera'=> $asignatura->sdd090d_cod_carr, 'asignatura'=>$asignatura->sdd090d_cod_asign])}}" class="cta_nueva_version">
                                         Nueva version</a></p>
                                     @endif
                                 </td>

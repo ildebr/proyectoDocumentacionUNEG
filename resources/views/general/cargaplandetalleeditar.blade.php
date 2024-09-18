@@ -4,7 +4,53 @@
         .form-grid{
             display: grid; grid-template-columns: 32% 32% 32%; gap: 1%
         }
+
+        
     </style>
+
+<style>
+    .form-grid{
+        display: grid; grid-template-columns: 32% 32% 32%; gap: 1%
+    }
+
+    .options-container{
+        height: 1px;
+        overflow: hidden;
+    }
+
+    .option__expanded__container{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        align-items: 
+    }
+
+    .option__expanded__container textarea{
+        grid-column: 1/-1;
+    }
+
+    .option__expanded__container p{
+        grid-row: 1;
+    }
+
+    .option__expanded__container input, .option__expanded__container .option__element__closebtn{
+        grid-row: 2;
+    }
+
+    .option__expanded__container input[name$='[nombre]']{
+        grid-column: 2/3;
+    }
+    .option__expanded__container input[name$='[orden]']{
+        grid-column: 1/2;
+    }
+
+    .option__element__closebtn{
+        justify-self: center
+    }
+
+    .option__expanded__container{
+        margin-bottom: 1rem;
+    }
+</style>
 
     
 
@@ -16,7 +62,7 @@
                 <div class="p-6 text-gray-900">
 
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                        Carga de plan de la asignatura: <strong>{{$asignatura->sdd090d_nom_asign}}</strong>
+                        ttCarga de plan de la asignatura: <strong>{{$asignatura->sdd090d_nom_asign}}</strong>
                     </h2>
                     {{-- {{request()->route('lapso')}}
                     {{request()->route('asignatura')}}
@@ -139,7 +185,8 @@
                         <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="estrategias_aprendizaje" id="estrategias_aprendizaje" cols="30" rows="10">{{$plan->sdd210ds_as_estrategias_aprendizajes}}</textarea>
                     </label>
                     <label class="mt-6 block" for="bibliografia">Bibliografia
-                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="bibliografia" id="bibliografia" cols="30" rows="10">{{$plan->sdd210ds_as_bibliografia}}</textarea>
+                        <div id="bibliografia-text"></div>
+                        <textarea style="display: none"  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="bibliografia" id="bibliografia" cols="30" rows="10">{{$plan->sdd210ds_as_bibliografia}}</textarea>
                     </label>
                     @if(!isset($estado) )
                         @if($plan->sdd210ds_estado == 'p')
@@ -186,6 +233,14 @@
             });
         });
         $('[data-option-button]').click(e=>{
+
+            if( $('input[data-option-input="temario"]').val().length <= 0){
+                // toastr.error('Error', 'El nombre de un tema debe ser mayor a 1 caracter')
+                console.log('nombre de tema muy corto')
+                return
+            }
+
+
             // where is the action coming from ang where is going to
             dataName = $(e.currentTarget).attr('data-option-button')
             console.log(dataName)
@@ -446,6 +501,13 @@
         i18n: il8n
     });
 
+    const bibliografia = new EditorJS({
+        holder: 'bibliografia-text',
+        data: JSON.parse(@json($plan->sdd210ds_as_bibliografia)),
+        tools: tools,
+        i18n: il8n
+    });
+
     
 
 
@@ -516,6 +578,14 @@
                     console.log('Saving failed: ', error);
                 });
             }),
+            new Promise((resolve,reject)=>{
+                bibliografia.save().then((outputData) => {
+                    console.log('Article data: ', outputData);
+                    $('textarea#bibliografia').val(JSON.stringify(outputData))
+                }).catch((error) => {
+                    console.log('Saving failed: ', error);
+                });
+            }),
         ]
             
             Promise.allSettled(promises).then((result)=>{
@@ -524,6 +594,84 @@
                 console.log("At leat any one promise was rejected:", error)
             })
 
+    })
+
+
+
+    /// temas del plan
+
+    console.log(@json($temas))
+    let temas = JSON.parse(JSON.stringify(@json($temas)))
+    console.log(temas)
+    temas.map(ele => {
+        console.log(ele,'ele')
+
+        dataName = 'temario'
+            console.log(dataName)
+            // the name value of the element just created
+            dataValue = ele.sdd215ds_nombre_tema
+            $(`[data-option-input=${dataName}]`).val('')
+            // an element with the title just asigned with a delete button
+            option = document.createElement('input')
+            option.type='text'
+            option.value = dataValue
+            option.name = dataName+'[]'
+            option.readOnly = true
+
+            
+            // contenedor para la opcion creada
+            container = document.createElement('div')
+            container.className = 'option__element__container'
+            container.setAttribute('data-option-container', dataValue)
+
+            // boton de eliminar
+            close_btn = document.createElement('div')
+            close_btn.className = 'option__element__closebtn'
+            close_btn.textContent = 'x'
+
+            container.appendChild(option)
+            container.appendChild(close_btn)
+
+            // se agrega el documento
+            $(`[data-option-container=${dataName}]`).append(container)
+
+
+            numero = $(`.option__expanded__container`).length
+
+
+            // se crea el area del area de texto
+            option_expanded_container = document.createElement('div')
+            option_expanded_title = document.createElement('p')
+            option_expanded_textarea = document.createElement('textarea')
+            option_expanded_orden = document.createElement('input')
+            option_expanded_textarea.placeholder = 'Contenido del tema';
+            option_expanded_textarea.value = ele.sdd215ds_contenido_tema
+            option_expanded_title.textContent = dataValue
+            option_expanded_title_input = document.createElement('input')
+            option_expanded_title_input.value = dataValue;
+            option_expanded_title_input.name = `temario[${numero}][nombre]`
+            // option_expanded_title_input.readOnly = true
+            option_expanded_textarea.name = `temario[${numero}][contenido]`
+            option_expanded_orden.name = `temario[${numero}][orden]`
+            option_expanded_orden.readOnly = true
+            option_expanded_orden.value = numero
+            
+
+
+            option_expanded_container.appendChild(option_expanded_title)
+            option_expanded_container.appendChild(option_expanded_title_input)
+            option_expanded_container.appendChild(close_btn)
+            option_expanded_container.appendChild(option_expanded_orden)
+            option_expanded_container.appendChild(option_expanded_textarea)
+            option_expanded_textarea.className = 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full'
+            option_expanded_textarea.rows = 5
+
+            option_expanded_container.className = 'option__expanded__container'
+            option_expanded_container.setAttribute(`data-option-parent`, dataValue)
+
+
+
+            $(`[data-option-expand=${dataName}]`).append(option_expanded_container)
     })
 </script>
 </x-app-layout>

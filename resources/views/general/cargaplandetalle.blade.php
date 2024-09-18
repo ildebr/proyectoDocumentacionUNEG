@@ -4,6 +4,40 @@
         .form-grid{
             display: grid; grid-template-columns: 32% 32% 32%; gap: 1%
         }
+
+        .options-container{
+            height: 1px;
+            overflow: hidden;
+        }
+
+        .option__expanded__container{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: 
+        }
+
+        .option__expanded__container textarea{
+            grid-column: 1/-1;
+        }
+
+        .option__expanded__container p{
+            grid-row: 1;
+        }
+
+        .option__expanded__container input, .option__expanded__container .option__element__closebtn{
+            grid-row: 2;
+        }
+
+        .option__expanded__container input[name$='[nombre]']{
+            grid-column: 2/3;
+        }
+        .option__expanded__container input[name$='[orden]']{
+            grid-column: 1/2;
+        }
+
+        .option__element__closebtn{
+            justify-self: center
+        }
     </style>
 
 
@@ -14,7 +48,7 @@
                 <div class="p-6 text-gray-900">
 
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                        Carga de plan de la asignatura: <strong>{{$asignatura->sdd090d_nom_asign}}</strong>
+                        zttCarga de plan de la asignatura: <strong>{{$asignatura->sdd090d_nom_asign}}</strong>
                     </h2>
                     {{-- {{request()->route('lapso')}}
                     {{request()->route('asignatura')}}
@@ -133,14 +167,15 @@
                         <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="estrategias_aprendizaje" id="estrategias_aprendizaje" cols="30" rows="10"></textarea>
                     </label>
                     <label class="mt-6 block" for="bibliografia">Bibliografia
-                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="bibliografia" id="bibliografia" cols="30" rows="10"></textarea>
+                        <div id="bibliografia-text"></div>
+                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="bibliografia" id="bibliografia" cols="30" rows="10"></textarea>
                     </label>
 
                     
                     <button class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 mt-6">Crear plan</button>
                     </form>
-                    <div id="editorjs"></div>
-                    <div id="guardar">guardar</div>
+                    {{-- <div id="editorjs"></div> --}}
+                    {{-- <div id="guardar">guardar</div> --}}
                     
                 </div>
             </div>
@@ -203,8 +238,10 @@
             option_expanded_title_input = document.createElement('input')
             option_expanded_title_input.value = dataValue;
             option_expanded_title_input.name = `temario[${numero}][nombre]`
+            // option_expanded_title_input.readOnly = true
             option_expanded_textarea.name = `temario[${numero}][contenido]`
             option_expanded_orden.name = `temario[${numero}][orden]`
+            option_expanded_orden.readOnly = true
             option_expanded_orden.value = numero
             
 
@@ -423,6 +460,12 @@
             i18n: il8n
         });
 
+        const estrategias_aprendizaje = new EditorJS({
+            holder: 'bibliografia-text',
+            tools: tools,
+            i18n: il8n
+        });
+
         // creo una promesa por cada dato que hay que formatear, si alguna no se cumple no se cargan los datos
         
 
@@ -500,6 +543,14 @@
                 estrategias_aprendizaje.save().then((outputData) => {
                     console.log('Article data: ', outputData);
                     $('textarea#estrategias_aprendizaje').val(JSON.stringify(outputData))
+                }).catch((error) => {
+                    console.log('Saving failed: ', error);
+                });
+            }),
+            new Promise((resolve,reject)=>{
+                bibliografia.save().then((outputData) => {
+                    console.log('Article data: ', outputData);
+                    $('textarea#bibliografia').val(JSON.stringify(outputData))
                 }).catch((error) => {
                     console.log('Saving failed: ', error);
                 });

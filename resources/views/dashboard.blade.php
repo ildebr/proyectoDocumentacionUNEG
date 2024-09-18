@@ -6,13 +6,15 @@
     </x-slot>
 
     
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-                </div>
-                <div class="p-6 text-gray-900">
-                    {{ __("[erra]") }}
-                </div>
+            <section class="seccion-aterrizaje">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900">
+                        <h1>{{ __("Bienvenido/a!") }}</h1>
+                    </div>
+                    <div class="p-6 text-gray-900">
+                        <p>Sístema de administración de planes</p>
+                    </div>
+            </section>
             
     </div>
 </x-app-layout>

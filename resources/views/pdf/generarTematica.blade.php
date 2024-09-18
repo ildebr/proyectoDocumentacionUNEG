@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Tematica</title>
-    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> --}}
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIiolrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> --}}
     <style>
         body{
             font-family: sans-serif;
@@ -121,11 +121,14 @@
         h2 span{
             width: 1cm;
             display: inline-block;
+            line-height: 1;
         }
         h2{
             vertical-align: center;
             margin-top: 4rem;
             margin-bottom: .5rem;
+            line-height: 1;
+            display: block;
         }
         
         h2,h3,h4{
@@ -145,6 +148,7 @@
         p{
             margin-top: 0;
             margin-bottom: 0;
+            word-break: break-all;
         }
         h4{
             padding-left: 2cm;
@@ -158,6 +162,16 @@
         }
         @page {
             margin: 100px 70px 100px 100px;
+        }
+
+        /* ol li{
+            list-style: dash;
+        } */
+
+        
+
+        li p{
+            margin-left: 0;
         }
     </style>
 </head>
@@ -202,11 +216,21 @@
         <tr>
             <td colspan='15' style="border-right:solid 1px black; text-align:center;"><strong>Programa de Estudio</strong></td>
             <td colspan='19' style="border-right: solid 1px black;">Tecnologo</td>
-            <td colspan='3'></td>
+            <td colspan='3'>
+                
+            </td>
             <td colspan='18' style="border-right: solid 1px black;">Licenciado</td>
-            <td colspan='3'></td>
+            <td colspan='3'>
+                @if ((int)$carrera->sdd080d_code_area == 2)
+                    <strong>X</strong>
+                @endif
+            </td>
             <td colspan='18' style="border-right: solid 1px black;">Ingeniero</td>
-            <td colspan='3'></td>
+            <td colspan='3'>
+                @if ((int)$carrera->sdd080d_code_area == 1 OR  $carrera->sdd080d_ordern_tecnicos == '4')
+                    <strong>X</strong>
+                @endif
+            </td>
             <td colspan='18' style="border-right: solid 1px black">Diplomado</td>
             <td colspan='3' style="border-right: none;"></td>
 
@@ -219,7 +243,7 @@
                 {{$asignatura->sdd090d_nom_asign}}
             </td>
             <td colspan="42">
-                <strong>SEMESTRE:</strong> 
+                <strong>SEMESTRE: {{$semestre->sdd110d_semestre}}</strong> 
             </td>
         </tr>
         <tr>
@@ -247,15 +271,18 @@
                 Semestral
             </td>
             <td colspan="19" style="text-align: center; height: 2rem;">
+                @if(isset($semestre->sdd110d_ha) AND isset($semestre->sdd110d_had))
+                    {{(int)$semestre->sdd110d_ha / $semestre->sdd110d_had}}
+                @endif
             </td>
             <td colspan="5" style="text-align: center; height: 2rem;">
-                
+                {{$asignatura->sdd090d_uc}}
             </td>
             <td colspan="6" style="text-align: center; height: 2rem;">
-                
+                {{$semestre->sdd110d_had}}
             </td>
             <td colspan="8" style="text-align: center; height: 2rem;">
-                
+                {{$semestre->sdd110d_ha}}
             </td>
             <td colspan="47" style="text-align: center; height: 2rem;">
                 
@@ -263,7 +290,7 @@
         </tr>
         <tr>
             <td colspan="35" rowspan="2" style="text-align: center; vertical-align: center;">
-                <strong>Eje de formación</strong>
+                <strong style="display: block; text-align:center; margin-top:2rem;">Eje de formación</strong>
             </td>
             <td colspan="18" style="text-align: center">
                 Integral-Creativo
@@ -307,11 +334,19 @@
             <td colspan="29" style="text-align: center">
                 Obligatoria
             </td>
-            <td colspan="3"></td>
+            <td colspan="3">
+                @if($plan->sdd090d_tipo_asig != 'l')
+                X
+                @endif
+            </td>
             <td colspan="30">
                 Electiva
             </td>
-            <td colspan="3"></td>
+            <td colspan="3">
+                @if($plan->sdd090d_tipo_asig == 'l')
+                X
+                @endif
+            </td>
         </tr>
         <tr>
             <td colspan="35">
@@ -416,6 +451,24 @@
             @endif
         </ul>
         <h2><span>VI.</span><strong>RED TEMATICA:</strong></h2>
+
+        @if(isset($relaciontematica) && $relaciontematica)
+            @for($i = 0 ; $i < count($relaciontematica) ; $i++)
+                @if($i == 0)
+                    <h5>
+                        {{$relaciontematica[$i]->sdd216d_nom_tema_asignatura_principal}}
+                    </h5>
+                @elseif($relaciontematica[$i]->sdd216d_id_tema_asignatura_principal !== $relaciontematica[$i-1]->sdd216d_id_tema_asignatura_principal)
+                    <h5>
+                        {{$relaciontematica[$i]->sdd216d_nom_tema_asignatura_principal}}
+                    </h5>
+                @endif
+                <p>
+                    {{$relaciontematica[$i]->sdd216d_nom_tema_asignatura_relacion}} - {{$relaciontematica[$i]->sdd216d_nom_asignatura_relacion}}
+                </p>
+
+            @endfor
+        @endif
         <ul>
             @if(isset($red_tematica) && $red_tematica)
                 @foreach($red_tematica as $capa)
@@ -470,17 +523,29 @@
         </ul>
 
         <h2>TEMAS DE INVESTIGACIÓN, ANÁLISIS Y EVALUACIÓN.</h2>
-        <p><strong>1.- - Introducción al estudio de la Administración Financiera y las Finanzas Corporativas.</strong></p>
-        <p>Explicar las funciones financieras básica de la organización y su ubicación dentro de la
-            estructura organizativa, el objetivo de la administración financiera, los aspectos importantes y
-            necesarios para el análisis del flujo de efectivo, y el rol del gerente financiero y sus funciones
-            fundamentales. Explicar el objetivo de la finanzas corporativas y evaluar aspectos necesarios
-            para el análisis de los Estados Financieros.
-        </p>
+        @if(isset($temas) && $temas)
+            @for ($i=0 ; $i < count($temas); $i++)
+                <h5 style="text-transform: capitalize; margin-bottom: 0; padding-bottom:0;">{{$i}}.- {{$temas[$i]->sdd215ds_nombre_tema}}:</h5>
+                <p style="margin: 0; padding: 0;">{{$temas[$i]->sdd215ds_contenido_tema}}</p>
+            @endfor
+            @else
+            <p>:p</p>
+        
+        @endif
 
-        <h2><span>X</span><strong>REFERENCIAS BIBLIOGRÁFICAS:</strong></h2>
-        <p class="biblio">BALDWIN JORGE y BALDWIN DARLOS, (1990) FINANZA DE LA EMPRESA. Editorial Norma,
-            Colombia.</p>
+        <h2 style="margin-bottom: 1rem;"><span>X</span><strong>REFERENCIAS BIBLIOGRÁFICAS:</strong></h2>
+        <p style="margin-bottom: 1rem"></p>
+        @if(isset($bibliografia) && $bibliografia)
+        @foreach($bibliografia as $capa)
+            @if($capa->type == 'paragraph')
+                <p style="margin-bottom: .5rem">{{$capa->data->text}}</p>
+            @elseif($capa->type == 'list')
+                @foreach($capa->data->items as $item)
+                <li>{{$item->content}}</li>
+                @endforeach
+            @endif
+        @endforeach
+        @endif
     </div>
 
 </body>

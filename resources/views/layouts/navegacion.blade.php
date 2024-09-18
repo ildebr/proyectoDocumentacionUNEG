@@ -9,21 +9,21 @@
         @role('administrador')
         
             <p>Administrador</p>
-            <x-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.index')">
+            {{-- <x-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.index')">
                 {{ __('Admin') }}
-            </x-nav-link>
+            </x-nav-link> --}}
             <x-nav-link :href="route('admin.createuser')" :active="request()->routeIs('admin.createuser')">
                 {{ __('Crear Usuario') }}
             </x-nav-link>
             <x-nav-link :href="route('admin.listuser')" :active="request()->routeIs('admin.listuser')">
                 {{ __('Listar Usuario') }}
             </x-nav-link>
-            <x-nav-link :href="route('general.crearplan')" :active="request()->routeIs('general.crearplan')">
+            {{-- <x-nav-link :href="route('general.crearplan')" :active="request()->routeIs('general.crearplan')">
                 {{ __('Crear Plan') }}
             </x-nav-link>
             <x-nav-link :href="route('general.cargarplan')" :active="request()->routeIs('general.cargarplan')">
                 {{ __('Cargar/editar Plan') }}
-            </x-nav-link>
+            </x-nav-link> --}}
         
         @endrole
 
