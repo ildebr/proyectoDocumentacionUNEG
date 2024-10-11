@@ -48,7 +48,7 @@
                 <div class="p-6 text-gray-900">
 
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                        zttCarga de plan de la asignatura: <strong>{{$asignatura->sdd090d_nom_asign}}</strong>
+                        Carga de plan de la asignatura: <strong>{{$asignatura->sdd090d_nom_asign}}</strong>
                     </h2>
                     {{-- {{request()->route('lapso')}}
                     {{request()->route('asignatura')}}
@@ -60,42 +60,42 @@
                     <div class="form-grid grid grid-cols-3 gap-4 mb-4" style="">
                         <div>
                             <label for="codigo">Codigo </label>
-                            <input  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" type="text" name="codigo" value='{{$asignatura->sdd090d_cod_asign}}'>
+                            <input  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" type="text" name="codigo" value='{{$asignatura->sdd090d_cod_asign}}' readonly>
                         </div>
                         <div>
                             <label for="uc">Unidad de credito</label>
-                            <input  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" type="text" name="uc" value={{$asignatura->sdd090d_uc}}>
+                            <input  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" type="text" name="uc" value={{$asignatura->sdd090d_uc}} readonly>
                         </div>
                         <div>
                             <label for="had">HAD</label>
-                            <input  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" type="text" name="had">
+                            <input  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" type="text" name="had" readonly value="{{$semestre->sdd110d_had}}">
                         </div>
                         <div>
                             <label for="cf">Componente de formacion</label>
                             <select  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="cf" id="cf">
                                 <option value=""></option>
                                 <option value="g">General</option>
+                                <option value="b">Profesional basica</option>
+                                <option value="e">Profesional especializada</option>
+                                <option value="p">Practica profesional</option>
+                                <option value="s">Pasantia</option>
                             </select>
                         </div>
                         <div>
                             <label for="caracter">Caracter</label>
                             <select  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="caracter" id="caracter">
                                 <option value=""></option>
-                                <option value="g">Obligatorio</option>
+                                @if($asignatura->sdd090d_tipo_asig == 'l')
+                                    <option value="g">Obligatorio</option>
+                                    <option selected value="e">Electiva</option>
+                                @else
+                                <option value="g" selected>Obligatorio</option>
                                 <option value="e">Electiva</option>
+                                @endif
+                                
                             </select>
                         </div>
                     </div>
-                    <label for="comp_form">Componente de formacion
-                        <select  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_form" id="comp_form">
-                            <option value=""></option>
-                            <option value="g">General</option>
-                            <option value="b">Profesional basica</option>
-                            <option value="e">Profesional especializada</option>
-                            <option value="p">Practica profesional</option>
-                            <option value="s">Pasantia</option>
-                        </select>
-                    </label>
 
                     <label class="mt-6" for="proposito">Proposito
                         <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="proposito" id="proposito" cols="30" rows="10"></textarea>
@@ -199,6 +199,10 @@
             console.log(dataName)
             // the name value of the element just created
             dataValue = $(`[data-option-input=${dataName}]`).val()
+            if(dataValue == ''){
+                toastr.error('Agrega un nombre para el tema')
+                return
+            }
             $(`[data-option-input=${dataName}]`).val('')
             // an element with the title just asigned with a delete button
             option = document.createElement('input')
@@ -292,9 +296,9 @@
 
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/nested-list@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/nested-list@latest"></script>
 
     <script>
         data = {
@@ -460,7 +464,7 @@
             i18n: il8n
         });
 
-        const estrategias_aprendizaje = new EditorJS({
+        const bibliografia = new EditorJS({
             holder: 'bibliografia-text',
             tools: tools,
             i18n: il8n

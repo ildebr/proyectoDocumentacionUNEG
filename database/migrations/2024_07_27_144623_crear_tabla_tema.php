@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// tabla para almacenar los temas de una asignatura
 return new class extends Migration
 {
     /**
@@ -17,7 +18,6 @@ return new class extends Migration
             $table->char('sdd215d_cod_carr', 4)->comment('codigo de la carrera');
             $table->char('sdd215d_cod_asign', 8)->comment('codigo de la asignatura');
             $table->char('sdd215d_lapso_vigencia', 40)->comment('nombre de la asignatura');
-            $table->Integer('sdd215d_version', 40)->comment('version del plan');
             
             $table->unsignedTinyInteger('sdd215ds_orden_tema')->comment('Orden de la asignatura relativo a otros temas')->nullable();
             $table->text('sdd215ds_nombre_tema')->comment('Nombre del tema')->nullable();

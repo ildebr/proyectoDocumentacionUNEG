@@ -38,10 +38,11 @@ class PdfController extends Controller
         error_log($asignatura);
         error_log($version);
         $semestre = sdd110d::where('sdd110d_lapso_vigencia', '=', $lapso)->where('sdd110d_cod_carr', '=', $carrera)->where('sdd110d_cod_asign', $asignatura)->first();
-        $temas = sdd215d::where('sdd215d_lapso_vigencia', '=', $lapso)->where('sdd215d_cod_carr', '=', $carrera)->where('sdd215d_cod_asign', $asignatura)->get();
-        $relaciontematica = sdd216d::where('sdd216d_lapso_vigencia', '=', $lapso)->where('sdd216d_cod_carr', '=', $carrera)->where('sdd216d_cod_asign', $asignatura)->orderBy('sdd216d_cod_asign')->orderBy('sdd216d_id_tema_asignatura_principal')->orderBy('sdd216d_cod_asign_relacion')->get();
+        $temas = sdd215d::where('sdd215d_lapso_vigencia', '=', $lapso)->where('sdd215d_cod_carr', '=', $carrera)->where('sdd215d_cod_asign', $asignatura)->where('sdd215d_version', $version)->get();
+        $relaciontematica = sdd216d::where('sdd216d_lapso_vigencia', '=', $lapso)->where('sdd216d_cod_carr', '=', $carrera)->where('sdd216d_cod_asign', $asignatura)->where('sdd216d_version', $version)->orderBy('sdd216d_cod_asign')->orderBy('sdd216d_id_tema_asignatura_principal')->orderBy('sdd216d_cod_asign_relacion')->get();
         // error_log(json_encode($relaciontematica));
         // obtenemos los datos del archivo pdf para generarlo
+        error_log(json_encode($relaciontematica));
         $plan = sdd210d::where('sdd210d_lapso_vigencia', '=', $lapso)->where('sdd210d_cod_carr', '=', $carrera)->where('sdd210d_cod_asign', '=', $asignatura)->where('sdd210ds_version', '=', $version)->first();
         error_log($plan->toArray);
         $asignatura = sdd090d::where('sdd090d_lapso_vigencia', '=', $lapso)->where('sdd090d_cod_carr', '=', $carrera)->where('sdd090d_cod_asign', $asignatura)->first();
@@ -90,7 +91,7 @@ class PdfController extends Controller
 
 
             $pdf = Pdf::loadView('pdf.generarTematica', compact('plan', 'asignatura', 'carrera', 'capacidades', 'estrategias_aprendizaje', 'habilidades', 'capacidadestematica', 'valoresactitudes', 'red_tematica', 'estrategias_docentes', 'capacidades', 'semestre', 'temas', 'bibliografia', 'relaciontematica'));
-            return $pdf->download('tematica.pdf');
+            return $pdf->download($asignatura->sdd090d_nom_asign.'-'.$carrera->sdd080d_nom_carr.'-'.$version.'-tematica.pdf');
         }else{
             abort(403, 'No existe esta pagina');
         }

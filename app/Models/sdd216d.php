@@ -19,6 +19,7 @@ class sdd216d extends Model
         "sdd216d_id_tema_asignatura_principal" ,
         "sdd216d_nom_tema_asignatura_principal" ,
         "sdd216d_id_tema_asignatura_relacion" ,
-        "sdd216d_nom_tema_asignatura_relacion"
+        "sdd216d_nom_tema_asignatura_relacion",
+        "sdd216d_version"
     ];
 }

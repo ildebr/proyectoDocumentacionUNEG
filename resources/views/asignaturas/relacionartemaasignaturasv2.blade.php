@@ -140,6 +140,10 @@
     }
 </style>
 <x-app-layout>
+    @push('styles')
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@latest/dist/css/shepherd.css" />
+    @endpush
+
     <div class="py-12" id="relacionartemasasignaturaspage">
         <div class="loading">
             <p>CARGANDO</p>
@@ -148,14 +152,46 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 relative">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <a class="volver-link" href="{{ route('general.listarasignaturaslapsocarrera', ['lapso'=>request()->route('lapso'), 'carrera'=>request()->route('carrera')])}}">Volver a la vista general del plan</a>
+                    <a class="volver-link text-blue-700" href="{{ route('general.listarasignaturaslapsocarrerav2', ['lapso'=>request()->route('lapso'), 'carrera'=>request()->route('carrera'),'version'=>request()->route('version')])}}">Volver a la vista general del plan</a>
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                         Relacionar temas de asignaturas
                     </h2>
+
+                    @if($noasignaturas)
+                        <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4" role="alert">
+                            <p class="font-bold">Crea relacion entre asignaturas</p>
+                            <p>Primero necesitas crear 
+                                <a href="{{route('asignaturas.relacionarasignaturasv2', ['lapso'=>$lapso, 'carrera' => $carrera['sdd080d_cod_carr'], 'version'=>request()->route('version')])}}" class="text-blue-700 font-bold">relaciones entre asignaturas</a>
+                                para poder relacionar los temas.</p>
+                        </div>
+                    @endif
+                    @if($mantenerpasado)
+                        <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
+                            <div class="flex">
+                            <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
+                            <div>
+                                <p class="font-bold">Mantener temas</p>
+                                <p class="text-sm">Si quieres mantener los mismos temas de la version anterior necesitas ir a 
+                                    necesitas ir al final y cargar los datos.
+                                    .</p>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="alert">Necesitas actualizar para mantener las relaciones creadas con la version anterior</div>
+                    @endif
+
+                    <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4" role="alert">
+                        <p> OJO: de habar una modificacion en las relaciones de asignaturas despues de haber relacionados los temas, presiona el boton de resetear para evitar errores</p>
+                    </div>
+                        
+                    
+
                     <p>Estas viendo los temas de las asignaturas de la carrera: <strong>{{$carrera['sdd080d_nom_carr']}}</strong> y codigo <strong>{{$carrera['sdd080d_cod_carr']}}</strong> con el lapso de vigencia <strong>{{$lapso}}</strong>.</p>
                     <p>Nota: Este debe ser el ultimo paso, de haber realizado algun cambio en los temas de alguna asignatura, cree nueva relaciones desde 0.</p>
 
                     <button id="resetear-relacion-tema" class="inline-flex items-center px-4 py-2 bg-red-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 ms-4">Resetear</button>
+                    <button class="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded inline-block" id="tutorial-btn">Tutorial</button>
+                    <div id="tutorial-area"></div>
                     {{-- <div class="relaciontemas__contenedor">
                         <div class="relaciontemas_asignatura__contenedor">
 
@@ -257,8 +293,16 @@
 
                         </div>
                     @endforeach
-
-                    <button id="cargar-relacion" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 ms-4">Subir relacion entre asignaturas</button>
+                    @if(!$noasignaturas)
+                        <button id="cargar-relacion" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 ms-4">Subir relacion entre asignaturas</button>
+                    @else
+                    <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4" role="alert">
+                        <p class="font-bold">Crea relacion entre asignaturas</p>
+                        <p>Primero necesitas crear 
+                            <a href="{{route('asignaturas.relacionarasignaturasv2', ['lapso'=>$lapso, 'carrera' => $carrera['sdd080d_cod_carr'], 'version'=>request()->route('version')])}}" class="text-blue-700 font-bold">relaciones entre asignaturas</a>
+                            para poder cargar los datos de esta pagina.</p>
+                    </div>
+                    @endif
                 </div>
 
             </div>
@@ -434,7 +478,7 @@
             var csrfToken = $('meta[name="csrf-token"]').attr('content')
 
             $.ajax({
-                url: '{{route('asignaturas.relacionartemas', ['lapso'=>request()->route('lapso'), 'carrera'=>request()->route('carrera')])}}',
+                url: '{{route('asignaturas.relacionartemasv2', ['lapso'=>request()->route('lapso'), 'carrera'=>request()->route('carrera'), 'version'=>request()->route('version')])}}',
                 type: 'post',
                 data: forms,
                 cache: false,
@@ -495,7 +539,7 @@
             var csrfToken = $('meta[name="csrf-token"]').attr('content')
             forms.append('resetear', 1);
             $.ajax({
-                url: '{{route('asignaturas.relacionartemas', ['lapso'=>request()->route('lapso'), 'carrera'=>request()->route('carrera')])}}',
+                url: '{{route('asignaturas.relacionartemasv2', ['lapso'=>request()->route('lapso'), 'carrera'=>request()->route('carrera'), 'version'=>request()->route('version')])}}',
                 type: 'post',
                 data: forms,
                 cache: false,
@@ -528,5 +572,267 @@
 
         
 
+    </script>
+
+<script src="https://cdn.jsdelivr.net/npm/shepherd.js@latest/dist/js/shepherd.min.js"></script>
+    <script>
+        const tour = new Shepherd.Tour({
+            useModalOverlay: true,
+            defaultStepOptions: {
+                cancelIcon: {
+                    enabled: true
+                },
+                classes: 'h2',
+                scrollTo: { behavior: 'smooth', block: 'center' }
+            }
+        });
+        // element: 'tbody tr:first-of-type a[href*="detalle"]',
+        tour.addStep({
+            title: 'Relacionar temas #1 - Introducción',
+            text: 'Crear la relación de temas es un proceso sencillo.',
+            attachTo: {
+                element: 'h2',
+                on: 'bottom'
+            },
+            useModalOverlay: true,
+            buttons: [
+                {
+                    action() {
+                        return this.next();
+                    },
+                    text: 'Siguiente'
+                }
+            ],
+            id: 'creating'
+        });
+
+        tour.addStep({
+            title: 'Relacionar temas #2 - Asignaturas',
+            text: 'Cada asignatura está dividida en dos areas. ',
+            attachTo: {
+                element: '#tutorial-area',
+                on: 'bottom'
+            },
+            useModalOverlay: true,
+            buttons: [
+                {
+                    action() {
+                        return this.back();
+                    },
+                    classes: 'shepherd-button-secondary',
+                    text: 'Anterior'
+                },
+                {
+                    action() {
+                        return this.next();
+                    },
+                    text: 'Siguiente'
+                }
+            ],
+            id: 'creating'
+        });
+
+        tour.addStep({
+            title: 'Relacionar temas #3 - Asignatura actual temas',
+            text: 'A la izquierda en negro se ubican los temas de la asignatura actual. ',
+            attachTo: {
+                element: '#tutorial-area .relaciontemas_asignatura_relaciones_contenedor',
+                on: 'bottom'
+            },
+            useModalOverlay: true,
+            buttons: [
+                {
+                    action() {
+                        return this.back();
+                    },
+                    classes: 'shepherd-button-secondary',
+                    text: 'Anterior'
+                },
+                {
+                    action() {
+                        return this.next();
+                    },
+                    text: 'Siguiente'
+                }
+            ],
+            id: 'creating'
+        });
+
+        tour.addStep({
+            title: 'Relacionar temas #3 - Asignatura relacionadas temas',
+            text: 'A la derecha en negro las asignaturas relacionadas y en las cajas verdes los temas de cada asignatura.',
+            attachTo: {
+                element: '#tutorial-area .relaciontemas_relacionado_contenedor',
+                on: 'bottom'
+            },
+            useModalOverlay: true,
+            buttons: [
+                {
+                    action() {
+                        return this.back();
+                    },
+                    classes: 'shepherd-button-secondary',
+                    text: 'Anterior'
+                },
+                {
+                    action() {
+                        return this.next();
+                    },
+                    text: 'Siguiente'
+                }
+            ],
+            id: 'creating'
+        });
+
+        tour.addStep({
+            title: 'Relacionar temas #4 - Relacionar',
+            text: 'Primero se presiona sobre un tema en el área izquierda (se observara una etiqueta de seleccionado) y luego un tema del lado derecho. Esto relacionara el tema de la asignatura actual con el tema de la asignatura seleccionada.',
+            attachTo: {
+                element: '#tutorial-area',
+                on: 'bottom'
+            },
+            useModalOverlay: true,
+            buttons: [
+                {
+                    action() {
+                        return this.back();
+                    },
+                    classes: 'shepherd-button-secondary',
+                    text: 'Anterior'
+                },
+                {
+                    action() {
+                        return this.next();
+                    },
+                    text: 'Siguiente'
+                }
+            ],
+            id: 'creating'
+        });
+
+        tour.addStep({
+            title: 'Relacionar temas #5 - Cargar Relación',
+            text: 'Puedes completar todas las relaciones de una vez y también puedes completar algunas, cargar los datos y en otro momento volver y cargar el resto. Los datos se guardan cada vez que presiones este botón, por lo cual es muy versátil si no está toda la información pero quieres cargar los que se tiene o si comenzaste a cargar los datos y durante el proceso ocurrió algo y te tienes que ir. OJO: si las relaciones de asignaturas o los temas de alguna asignatura fueron modificados deberas presionar resetar y empezar desde 0 para evitar errores.',
+            attachTo: {
+                element: '#cargar-relacion',
+                on: 'bottom'
+            },
+            useModalOverlay: true,
+            buttons: [
+                {
+                    action() {
+                        return this.back();
+                    },
+                    classes: 'shepherd-button-secondary',
+                    text: 'Anterior'
+                },
+                {
+                    action() {
+                        return this.next();
+                    },
+                    text: 'Siguiente'
+                }
+            ],
+            id: 'creating'
+        });
+
+        tour.on('complete', e=>{
+            $('#tutorial-area').remove()
+        })
+        tour.on('cancel', e=>{
+            $('#tutorial-area').remove()
+        })
+        tour.on('start', e=>{
+            console.log('start')
+
+            $('#tutorial-area').prepend(`
+            <div class="relaciontemas_asignatura__contenedor" id="relacion-caja-tutorial" data-asignatura-nombre="ESTADÍSTICA I                           ">
+
+                            <div class="relaciontemas_mitad">
+                                <h3 class="relacion_asignatura_nombre">
+                                    ESTADÍSTICA I                           
+                                </h3>
+
+                                <div class="relaciontemas_asignatura_relaciones_contenedor">
+                                    
+                                
+                <div class="relaciontemas_asignatura__temas__contenedor" data-tema-id="4" data-asignatura="1472101">
+                    <div class="relaciontemas_asignatura__tema">
+                        <h4>tema 2</h4>
+                    </div>
+                    <div class="relaciontemas_asignatura__temasrelacionados">
+                    </div>
+                </div>
+            
+                <div class="relaciontemas_asignatura__temas__contenedor" data-tema-id="5" data-asignatura="1472101">
+                    <div class="relaciontemas_asignatura__tema">
+                        <h4>tema3</h4>
+                    </div>
+                    <div class="relaciontemas_asignatura__temasrelacionados">
+                    </div>
+                </div>
+            
+                <div class="relaciontemas_asignatura__temas__contenedor" data-tema-id="6" data-asignatura="1472101">
+                    <div class="relaciontemas_asignatura__tema">
+                        <h4>tema 1</h4>
+                    </div>
+                    <div class="relaciontemas_asignatura__temasrelacionados">
+                    </div>
+                </div>
+            
+                <div class="relaciontemas_asignatura__temas__contenedor" data-tema-id="7" data-asignatura="1472101">
+                    <div class="relaciontemas_asignatura__tema">
+                        <h4>tema 4</h4>
+                    </div>
+                    <div class="relaciontemas_asignatura__temasrelacionados">
+                    </div>
+                </div>
+            </div>
+                            </div>
+                            <div class="relaciontemas_mitad">
+                                <p>Asingaturas relacionads</p>
+                                <div class="relaciontemas_relacionado_contenedor">
+                                    
+                                
+                <div class="relaciontemas_relacionado_contenedor__interno asignaturaderelacionhijo-1472209" id="asignaturaderelacionhijo-1472209">
+                    <h5 class="relaciontemas_relacionado_nombre">
+                        MATEMÁTICA II
+                    </h5>
+                    <div class="relaciontemas_relacionado_temas">
+                        <div class="relaciontemas_relacionado_tema">
+                            
+                        </div>
+                    
+                <div class="relaciontemas_relacionado_tema" data-tema-asignatura="1472209" data-tema-id="16">
+                    <span>mate 2</span>
+                </div>
+            
+                <div class="relaciontemas_relacionado_tema" data-tema-asignatura="1472209" data-tema-id="17">
+                    <span>mate 22</span>
+                </div>
+            </div>
+                </div>
+            
+                <div class="relaciontemas_relacionado_contenedor__interno asignaturaderelacionhijo-1472320" id="asignaturaderelacionhijo-1472320">
+                    <h5 class="relaciontemas_relacionado_nombre">
+                        MATEMÁTICAS DISCRETAS
+                    </h5>
+                    <div class="relaciontemas_relacionado_temas">
+                        <div class="relaciontemas_relacionado_tema">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+                            </div>
+
+                        </div>
+            `)
+        })
+
+        $('#tutorial-btn').click(e=>{
+            tour.start()
+        })
+        
     </script>
 </x-app-layout>

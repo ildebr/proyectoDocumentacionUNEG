@@ -1,4 +1,11 @@
 <x-app-layout>
+    <style>
+        li{
+            margin-left: 1rem;
+            /* padding-left: 1rem; */
+            list-style: auto;
+        }
+    </style>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -10,26 +17,28 @@
                     @if(isset($data['error']) && $data['error'] =='')
 
                     <p>Esta asignando las siguientes asignaturas</p>
-                    @foreach ($data['seleccionadas'] as $sel)
+                    {{-- @foreach ($data['seleccionadas'] as $sel)
                         {{$sel}}
-                    @endforeach
+                    @endforeach --}}
 
 
                     <div class="mt-5 mb-5">
-                        @foreach ($selresults as $asign)
-                            <p>{{$asign->sdd090d_nom_asign}}</p>
-                        @endforeach
+                        <ul>
+                            @foreach ($selresults as $asign)
+                                <li><p>{{$asign->sdd090d_nom_asign}}</p></li>
+                            @endforeach
+                        </ul>
                     </div>
 
-                    <p>Nota: Al asignar coordinador le esta otorgando la capacidad de que este asigna la(s) asignatura(s) a otro profesor o lo complete el/ella mismo/a.</p>
+                    <p>Nota: Al asignar coordinador le esta otorgando la capacidad de que este asigne la(s) asignatura(s) a otro profesor o lo complete el/ella mismo/a.</p>
                     <p>Al completar la carga de informacion asignado por un coordinador, este pasara al coordinador para ser aprobado y luego a la/el jefe de departamento.</p>
 
 
-                    <form method="POST" action="{{route('general.asignarasignaturapost')}}">
+                    <form method="POST" action="{{route('general.asignarasignaturapostv2')}}">
                         @csrf
                         <input type="hidden" name="lapso" value="{{$data['lapso']}}">
                         <input type="hidden" name="carrera" value="{{$data['carrera']}}">
-                        
+                        <input type="hidden" name="version" value="{{$data['version']}}">
 
                         @foreach ($selresults as $asign)
                             <input type="hidden" name="asignaturas[]" value="{{$asign->sdd090d_cod_asign}}">

@@ -17,7 +17,8 @@ class sdd200d extends Model
         'sdd200d_lapso_vigencia',
         'sdd200d_inferior_asignado',
         'sdd200d_superior_asignado',
-        'sdd200d_estado'
+        'sdd200d_estado',
+        'sdd200d_version'
     ];
 
 }

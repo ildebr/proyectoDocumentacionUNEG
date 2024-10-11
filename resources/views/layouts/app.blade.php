@@ -22,6 +22,9 @@
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+        @stack('styles')
+        @stack('head-scripts')
     </head>
     <body class="font-sans antialiased">
             
@@ -48,5 +51,7 @@
                 </div>
             </main>
         </div>
+
+        
     </body>
 </html>

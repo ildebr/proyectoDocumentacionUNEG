@@ -15,6 +15,7 @@ class sdd095d extends Model
         'sdd095_cod_asign',
         'sdd095_nom_asignatura',
         'sdd095_asignatura_relacion_cod',
-        'sdd095_asignatura_relacion_nombre'
+        'sdd095_asignatura_relacion_nombre',
+        'sdd095d_version'
     ];
 }

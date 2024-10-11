@@ -1,7 +1,7 @@
 <nav>
     <header class="nav-header">
         <div class="flex ml-3">
-            <img src="images/vin.jpg" alt="vin" class='inline-block'>
+            <img src="{{asset('images/vin.jpg')}}" alt="vin" class='inline-block'>
             <p class="ml-3">MENU PRINCIPAL</p>
         </div>
     </header>
@@ -28,13 +28,13 @@
         @endrole
 
         @role('administrador')
-            <p>Carreras</p>
+            {{-- <p>Carreras</p>
             <x-nav-link :href="route('general.listarcarreras')" :active="request()->routeIs('general.listarcarreras')">
                 {{ __('Listado de Carreras') }}
             </x-nav-link>
             <x-nav-link :href="route('general.listarasignaturas')" :active="request()->routeIs('general.listarasignaturas')">
                 {{ __('Listado de Asignaturas') }}
-            </x-nav-link>
+            </x-nav-link> --}}
         @endrole
         <p>Planes</p>
         @role('administrador')

@@ -15,7 +15,7 @@
             <tbody>
                 @foreach ($users as $user)
                     <tr>
-                        <td><a href="{{ route('admin.changeuserroleorpermission', ['id' => $user['id']]) }}/">{{$user['name']}}</a></td>
+                        <td><a class="text-blue-700" href="{{ route('admin.changeuserroleorpermission', ['id' => $user['id']]) }}/">{{$user['name']}}</a></td>
                         <td>{{$user['email']}}</td>
                         <td>
                             @if($user->roles)

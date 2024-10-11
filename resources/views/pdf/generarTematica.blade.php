@@ -154,7 +154,9 @@
             padding-left: 2cm;
         }
         ul li{
-            margin-left: 1cm
+            margin-left: 1cm;
+            list-style: disc;
+            padding-left: 1cm;
         }
         .curriculo{
             width: 30%;
@@ -362,7 +364,7 @@
         </tr>
         <tr>
             <td colspan="65">Elaborado por: </td>
-            <td colspan="35"><strong>Fecha: </strong></td>
+            <td colspan="35"><strong>Fecha: {{ date('Y-m-d') }}</strong></td>
         </tr>
         <tr>
             <td colspan="100">
@@ -402,7 +404,7 @@
                         <p>{{$capa->data->text}}</p>
                     @elseif($capa->type == 'list')
                         @foreach($capa->data->items as $item)
-                        <li>{{$item->content}}</li>
+                        <li>a{{$item->content}}</li>
                         @endforeach
                     @endif
                 @endforeach

@@ -22,6 +22,7 @@
                             <th>Nombre asignatura</th>
                             <th>Carrera</th>
                             <th>Lapso</th>
+                            <th>Version</th>
                             <th>Estado</th>
                             <th>Accion</th>
                         </thead>
@@ -31,6 +32,7 @@
                                 <td>{{$asignado->sdd200d_nom_asign}}</td>
                                 <td>{{$asignado->sdd200d_cod_carr}}</td>
                                 <td>{{$asignado->sdd200d_lapso_vigencia}}</td>
+                                <td>{{$asignado->sdd200d_version}}</td>
                                 <td>
                                     @if($asignado->sdd200d_estado == 'a ')
                                     <span>Asignado</span>

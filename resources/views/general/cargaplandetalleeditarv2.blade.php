@@ -62,13 +62,14 @@
                 <div class="p-6 text-gray-900">
 
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                        Editar plan de la asignatura: <strong>{{$asignatura->sdd090d_nom_asign}}</strong>
+                        Editar programa de la asignatura: <strong>{{$asignatura->sdd090d_nom_asign}}</strong>
                     </h2>
+                    
                     {{-- {{request()->route('lapso')}}
                     {{request()->route('asignatura')}}
                     {{request()->route('carrera')}} --}}
                     
-                    <form method="POST" action="{{route('general.plancrear', ['lapso'=>request()->route('lapso'), 'asignatura'=>request()->route('asignatura'), 'carrera'=>request()->route('carrera')])}}" class="plan_formulario">
+                    <form method="POST" action="{{route('general.plancrearv2', ['lapso'=>request()->route('lapso'), 'asignatura'=>request()->route('asignatura'), 'carrera'=>request()->route('carrera'), 'version'=>request()->route('version')])}}" class="plan_formulario">
                     @csrf
                     <h3 class="mt-2 mb-2"><strong>Informacion General</strong></h3>
 
@@ -115,42 +116,42 @@
                     </div>
 
                     <label class="mt-6" for="proposito">Proposito
-                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="proposito" id="proposito" cols="30" rows="10">{{$plan->sdd210ds_as_proposito}}</textarea>
+                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="proposito" id="proposito" cols="30" rows="10">{{isset($plan->sdd210ds_as_proposito) ? $plan->sdd210ds_as_proposito : ''}}</textarea>
                     </label>
                     <label class="mt-6" for="capacidades">Capacidades a desarrollar (tematica)
-                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="capacidades" id="capacidades" cols="30" rows="10">{{$plan->sdd210ds_r_capacidades}}</textarea>
+                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="capacidades" id="capacidades" cols="30" rows="10">{{isset($plan->sdd210ds_r_capacidades) ? $plan->sdd210ds_r_capacidades : ''}}</textarea>
                         <div id="capacidades-text"></div>
                         
                     </label>
                     <label class="mt-6" for="habilidades">Habilidades a desarrollar (tematica)
                         <div id="habilidades-text"></div>
-                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="habilidades" id="habilidades" cols="30" rows="10">{{$plan->sdd210ds_r_habilidades}}</textarea>
+                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="habilidades" id="habilidades" cols="30" rows="10">{{isset($plan->sdd210ds_r_habilidades) ? $plan->sdd210ds_r_habilidades : ''}}</textarea>
                     </label>
                     <label class="mt-6" for="capacidades_profesionales_tematica">Capacidades profesionales (tematica)
                         <div id="capacidades_profesionales_tematica-text"></div>
-                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="capacidades_profesionales_tematica" id="capacidades_profesionales_tematica" cols="30" rows="10">{{$plan->sdd210ds_r_capacidades_profesionales}}</textarea>
+                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="capacidades_profesionales_tematica" id="capacidades_profesionales_tematica" cols="30" rows="10">{{isset($plan->sdd210ds_r_capacidades_profesionales) ? $plan->sdd210ds_r_capacidades_profesionales : ''}}</textarea>
                     </label>
                     <label class="mt-6" for="red_tematica">Red tematica (tematica)
                         <div id="red_tematica-text"></div>
-                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="red_tematica" id="red_tematica" cols="30" rows="10">{{$plan->sdd210ds_r_red_tematica}}</textarea>
+                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="red_tematica" id="red_tematica" cols="30" rows="10">{{isset($plan->sdd210ds_r_red_tematica) ? $plan->sdd210ds_r_red_tematica : ''}}</textarea>
                     </label>
                     <label class="mt-6" for="descripcion_red_tematica">Descripcion de la red tematica (tematica)
-                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="descripcion_red_tematica" id="descripcion_red_tematica" cols="30" rows="10">{{$plan->sdd210ds_r_descripcion_red_tematica}}</textarea>
+                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="descripcion_red_tematica" id="descripcion_red_tematica" cols="30" rows="10">{{isset($plan->sdd210ds_r_descripcion_red_tematica) ? $plan->sdd210ds_r_descripcion_red_tematica : ''}}</textarea>
                     </label>
                     <label class="mt-6 block" for="comp_genericas">Competencias genericas de un estudiante UNEG
-                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_genericas" id="comp_genericas" cols="30" rows="10">{{$plan->sdd210ds_as_competencias_genericas}}</textarea>
+                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_genericas" id="comp_genericas" cols="30" rows="10">{{isset($plan->sdd210ds_as_competencias_genericas) ? $plan->sdd210ds_as_competencias_genericas : ''}}</textarea>
                     </label>
                     <label class="mt-6 block" for="comp_profesionales">Competencias Profesionales (texto corto)
-                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_profesionales" id="comp_profesionales" cols="30" rows="10">{{$plan->sdd210ds_a_competencias_profesionales}}</textarea>
+                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_profesionales" id="comp_profesionales" cols="30" rows="10">{{isset($plan->sdd210ds_a_competencias_profesionales) ? $plan->sdd210ds_a_competencias_profesionales : ''}}</textarea>
                     </label>
                     <label class="mt-6 block" for="comp_profesionales_basicas">Competencias Profesionales Basicas
-                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_profesionales_basicas" id="comp_profesionales_basicas" cols="30" rows="10">{{$plan->sdd210ds_s_competencias_profesionales_basicas}}</textarea>
+                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_profesionales_basicas" id="comp_profesionales_basicas" cols="30" rows="10">{{isset($plan->sdd210ds_s_competencias_profesionales_basicas) ? $plan->sdd210ds_s_competencias_profesionales_basicas : ''}}</textarea>
                     </label>
                     <label class="mt-6 block" for="comp_profesionales_especificas">Competencias Profesionales Especificas
-                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_profesionales_especificas" id="comp_profesionales_especificas" cols="30" rows="10">{{$plan->sdd210ds_s_competencias_profesionales_especificas}}</textarea>
+                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_profesionales_especificas" id="comp_profesionales_especificas" cols="30" rows="10">{{isset($plan->sdd210ds_s_competencias_profesionales_especificas) ? $plan->sdd210ds_s_competencias_profesionales_especificas : ''}}</textarea>
                     </label>
                     <label class="mt-6 block" for="comp_unidad_curricular">Competencias de la Unidad Curricular
-                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_unidad_curricular" id="comp_unidad_curricular" cols="30" rows="10">{{$plan->sdd210ds_a_competencias_unidad_curricular}}</textarea>
+                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="comp_unidad_curricular" id="comp_unidad_curricular" cols="30" rows="10">{{isset($plan->sdd210ds_a_competencias_unidad_curricular) ? $plan->sdd210ds_a_competencias_unidad_curricular : ''}}</textarea>
                     </label>
                     <label class="mt-6 block" for="temario">Temario
                         <div class="options-controller" data-option-controller='temario'>
@@ -171,24 +172,24 @@
                     </label>
                     <label class="mt-6 block" for="valores_actitudes">Valores y actitudes
                         <div id="valores_actitudes-text"></div>
-                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="valores_actitudes" id="valores_actitudes" cols="30" rows="10">{{$plan->sdd210ds_a_valores_actitudes}}</textarea>
+                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="valores_actitudes" id="valores_actitudes" cols="30" rows="10">{{isset($plan->sdd210ds_a_valores_actitudes) ? $plan->sdd210ds_a_valores_actitudes : ''}}</textarea>
                     </label>
                     <label class="mt-6 block" for="estrategias_didacticas">Estrategias Didacticas
-                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="estrategias_didacticas" id="estrategias_didacticas" cols="30" rows="10">{{$plan->sdd210ds_as_estrategias_didacticas}}</textarea>
+                        <textarea  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="estrategias_didacticas" id="estrategias_didacticas" cols="30" rows="10">{{isset($plan->sdd210ds_as_estrategias_didacticas) ? $plan->sdd210ds_as_estrategias_didacticas : ''}}</textarea>
                     </label>
                     <label class="mt-6 block" for="estrategias_docentes">Estrategias Docentes
                         <div id="estrategias_docentes-text"></div>
-                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="estrategias_docentes" id="estrategias_docentes" cols="30" rows="10">{{$plan->sdd210ds_as_estrategias_docentes}}</textarea>
+                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="estrategias_docentes" id="estrategias_docentes" cols="30" rows="10">{{isset($plan->sdd210ds_as_estrategias_docentes) ? $plan->sdd210ds_as_estrategias_docentes : ''}}</textarea>
                     </label>
                     <label class="mt-6 block" for="estrategias_aprendizaje">Estrategias De Aprendizaje
                         <div id="estrategias_aprendizaje-text"></div>
-                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="estrategias_aprendizaje" id="estrategias_aprendizaje" cols="30" rows="10">{{$plan->sdd210ds_as_estrategias_aprendizajes}}</textarea>
+                        <textarea style="display: none" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="estrategias_aprendizaje" id="estrategias_aprendizaje" cols="30" rows="10">{{isset($plan->sdd210ds_as_estrategias_aprendizajes) ? $plan->sdd210ds_as_estrategias_aprendizajes : ''}}</textarea>
                     </label>
                     <label class="mt-6 block" for="bibliografia">Bibliografia
                         <div id="bibliografia-text"></div>
-                        <textarea style="display: none"  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="bibliografia" id="bibliografia" cols="30" rows="10">{{$plan->sdd210ds_as_bibliografia}}</textarea>
+                        <textarea style="display: none"  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-2 w-full" name="bibliografia" id="bibliografia" cols="30" rows="10">{{isset($plan->sdd210ds_as_bibliografia) ? $plan->sdd210ds_as_bibliografia : ''}}</textarea>
                     </label>
-                    @if(!isset($estado) )
+                    @if(!isset($estado) && isset($plan))
                         @if($plan->sdd210ds_estado == 'p')
                         <p>Este archivo no se puede actualizar</p>
                         @else
@@ -199,6 +200,10 @@
                     @else
                         @if(isset($plan->sdd210ds_estado) && $plan->sdd210ds_estado == 'p')
                         <span></span>
+                        @elseif(!isset($plan->sdd210ds_estado) && auth()->user()->hasRole('administrador'))
+                        <button class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 mt-6">
+                            Cargar
+                        </button>
                         @else
                             <button class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 mt-6">
                                 @if($estado->sdd200d_estado == 'c ' || $estado->sdd200d_estado == 'rj' || $estado->sdd200d_estado == 'ff')
@@ -452,59 +457,59 @@
             },
         }
 
-    console.log(@json($plan->sdd210ds_r_capacidades))
+    console.log(@json($plan->sdd210ds_r_capacidades ?? ''))
     const capacidades = new EditorJS({
         holder: 'capacidades-text',
-        data: JSON.parse(@json($plan->sdd210ds_r_capacidades)),
+        data: JSON.parse(@json($plan->sdd210ds_r_capacidades ?? '{}')),
         tools: tools,
         i18n: il8n
     });
 
     const habilidades = new EditorJS({
         holder: 'habilidades-text',
-        data: JSON.parse(@json($plan->sdd210ds_r_habilidades)),
+        data: JSON.parse(@json($plan->sdd210ds_r_habilidades ?? '{}')),
         tools: tools,
         i18n: il8n
     });
 
     const capacidadestematica = new EditorJS({
         holder: 'capacidades_profesionales_tematica-text',
-        data: JSON.parse(@json($plan->sdd210ds_r_capacidades_profesionales)),
+        data: JSON.parse(@json($plan->sdd210ds_r_capacidades_profesionales ?? '{}')),
         tools: tools,
         i18n: il8n
     });
 
     const valoresactitudes = new EditorJS({
         holder: 'valores_actitudes-text',
-        data: JSON.parse(@json($plan->sdd210ds_a_valores_actitudes)),
+        data: JSON.parse(@json($plan->sdd210ds_a_valores_actitudes ?? '{}')),
         tools: tools,
         i18n: il8n
     });
 
     const red_tematica = new EditorJS({
         holder: 'red_tematica-text',
-        data:  JSON.parse(@json($plan->sdd210ds_r_red_tematica)),
+        data:  JSON.parse(@json($plan->sdd210ds_r_red_tematica ?? '{}')),
         tools: tools,
         i18n: il8n
     });
 
     const estrategias_docentes = new EditorJS({
         holder: 'estrategias_docentes-text',
-        data: JSON.parse(@json($plan->sdd210ds_r_capacidades)),
+        data: JSON.parse(@json($plan->sdd210ds_r_capacidades ?? '{}')),
         tools: tools,
         i18n: il8n
     });
 
     const estrategias_aprendizaje = new EditorJS({
         holder: 'estrategias_aprendizaje-text',
-        data: JSON.parse(@json($plan->sdd210ds_r_capacidades)),
+        data: JSON.parse(@json($plan->sdd210ds_r_capacidades ?? '{}')),
         tools: tools,
         i18n: il8n
     });
 
     const bibliografia = new EditorJS({
         holder: 'bibliografia-text',
-        data: JSON.parse(@json($plan->sdd210ds_as_bibliografia)),
+        data: JSON.parse(@json($plan->sdd210ds_as_bibliografia ?? '{}')),
         tools: tools,
         i18n: il8n
     });
@@ -520,6 +525,11 @@
         // }).catch((error) => {
         // console.log('Saving failed: ', error);
         // });
+        if($('.option__expanded__container').length == 0){
+            toastr.error('Añadir temas', 'Necesitas añadir al menos un tema al programa')
+            e.preventDefault()
+            return
+        }
         const promises = [
             new Promise((resolve,reject)=>{
                 capacidades.save().then((outputData) => {
